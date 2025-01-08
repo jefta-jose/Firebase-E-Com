@@ -15,6 +15,7 @@ interface UserType {
   email: string;
   avatar: string;
   id: string;
+  location: string;
 }
 
 interface StoreType {
@@ -47,6 +48,7 @@ const customStorage = {
     localStorage.removeItem(name);
   },
 };
+
 export const store = create<StoreType>()(
   persist(
     (set) => ({
