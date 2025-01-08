@@ -50,7 +50,6 @@ export interface UserTypes {
     email: string;
     avatar: string;
     id: string;
-    location : string;
   };
 }
 

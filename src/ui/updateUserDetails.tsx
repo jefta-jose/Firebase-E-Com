@@ -5,16 +5,18 @@ import upload from "../lib/upload";
 import { UserTypes } from "../../type";
 
 import { getAuth } from "firebase/auth";
-
-import { updatePassword , reauthenticateWithCredential , EmailAuthProvider } from "firebase/auth";
+import {
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+} from "firebase/auth";
+import { MdPhotoLibrary } from "react-icons/md";
 
 const UpdateUserDetails = ({ currentUser }: UserTypes) => {
-
   const auth = getAuth();
+  
   const user = auth.currentUser;
 
-
-  const [activeSection, setActiveSection] = useState("personalDetails"); // Determines which section is active
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [avatar, setAvatar] = useState({
@@ -35,7 +37,7 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    const { firstName, lastName, email, location } = Object.fromEntries(formData);
+    const { firstName, lastName, email } = Object.fromEntries(formData);
 
     try {
       setLoading(true);
@@ -50,7 +52,6 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
         firstName,
         lastName,
         email,
-        location,
         avatar: imageUrl,
       });
 
@@ -68,22 +69,31 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    const { currentPassword, newPassword } = Object.fromEntries(formData) as {currentPassword:string , newPassword: string};
+
+    const { currentPassword, newPassword } = Object.fromEntries(formData) as unknown as {
+      currentPassword: string;
+      newPassword: string;
+    };
+
+    console.log("currentPassword:" , currentPassword , "newPassword:" , newPassword);
 
     try {
       setLoading(true);
 
-      if(user){
+      if (user) {
         // Re-authenticate the user
-        const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+        const credential = EmailAuthProvider.credential(
+          currentUser.email,
+          currentPassword
+        );
         await reauthenticateWithCredential(user, credential);
 
         // Update the password
         await updatePassword(user, newPassword);
 
         setErrMsg("");
+        alert("Password updated successfully!");
       }
-
     } catch (error) {
       console.error("Error updating password:", error);
       setErrMsg("Failed to update password. Ensure current password is correct.");
@@ -93,114 +103,179 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-x-4">
-      {/* Left Section */}
-      <div className="flex flex-col items-center border-r pr-4">
-        <h2 className="text-xl font-semibold mb-4">Settings</h2>
-        <button
-          onClick={() => setActiveSection("personalDetails")}
-          className={`py-2 px-4 w-full text-left ${
-            activeSection === "personalDetails" ? "bg-gray-200" : ""
-          }`}
-        >
-          Personal Details
-        </button>
-        <button
-          onClick={() => setActiveSection("changePassword")}
-          className={`py-2 px-4 w-full text-left ${
-            activeSection === "changePassword" ? "bg-gray-200" : ""
-          }`}
-        >
-          Change Password
-        </button>
-      </div>
+    <div className="bg-gray-950 rounded-lg">
+      <form
+        onSubmit={handleUpdatingDetails}
+        className="max-w-5xl mx-auto pt-10 px-10 lg:px-0 text-white"
+      >
+        <div className="border-b border-b-white/10 pb-5">
+          <h2 className="text-lg font-semibold uppercase leading-7">
+            Update Your Profile
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-gray-400">
+            Fill In Your Details To Update Your Profile
+          </p>
+        </div>
 
-      {/* Right Section */}
-      <div className="pl-4">
-        {activeSection === "personalDetails" && (
-          <form onSubmit={handleUpdatingDetails} className="space-y-4">
-            <h2 className="text-lg font-semibold">Update Personal Details</h2>
-            <img
-              src={avatar.url || currentUser?.avatar}
-              alt="Profile"
-              className="w-24 h-24 rounded-full mb-4"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="block"
-            />
-            <input
-              type="text"
-              name="firstName"
-              defaultValue={currentUser?.firstName}
-              placeholder="First Name"
-              required
-              className="block w-full border p-2 rounded"
-            />
-            <input
-              type="text"
-              name="lastName"
-              defaultValue={currentUser?.lastName}
-              placeholder="Last Name"
-              required
-              className="block w-full border p-2 rounded"
-            />
+        <div className="border-b border-b-white/10 pb-5">
+          <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
+            <div className="sm:col-span-3">
+              <label htmlFor="firstName" className="block text-sm font-medium">
+                First Name
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                id="firstName"
+                defaultValue={currentUser?.firstName}
+                required
+                className="mt-1 p-2 block w-full rounded-md bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-gray-600 focus:outline-none"
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="lastName" className="block text-sm font-medium">
+                Last Name
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                id="lastName"
+                defaultValue={currentUser?.lastName}
+                required
+                className="mt-1 p-2 block w-full rounded-md bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-gray-600 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="sm:col-span-3 mt-4">
+            <label htmlFor="email" className="block text-sm font-medium">
+              Email Address
+            </label>
             <input
               type="email"
               name="email"
+              id="email"
               defaultValue={currentUser?.email}
-              placeholder="Email"
               required
-              className="block w-full border p-2 rounded"
+              className="mt-1  p-2 block w-full rounded-md bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-gray-600 focus:outline-none"
             />
-            <input
-              type="text"
-              name="location"
-              defaultValue={currentUser?.location}
-              placeholder="Location"
-              className="block w-full border p-2 rounded"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              {loading ? "Updating..." : "Update Profile"}
-            </button>
-          </form>
-        )}
+          </div>
+        </div>
 
-        {activeSection === "changePassword" && (
-          <form onSubmit={handleChangePassword} className="space-y-4">
-            <h2 className="text-lg font-semibold">Change Password</h2>
+        <div className="mt-5">
+          <label htmlFor="file-upload" className="block text-sm font-medium">
+            Profile Picture
+          </label>
+          <div className="mt-2 flex items-center gap-x-3">
+            <div className="flex-1">
+              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-4">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-14 h-14 border border-gray-600 rounded-full p-1">
+                    {avatar?.url ? (
+                      <img
+                        src={avatar?.url}
+                        alt="userImage"
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <MdPhotoLibrary className="mx-auto h-full w-full text-gray-500" />
+                    )}
+                  </div>
+                  <label
+                    htmlFor="file-upload"
+                    className="relative cursor-pointer rounded-md px-2 py-1 bg-gray-900 font-semibold text-gray-200 hover:bg-gray-800"
+                  >
+                    Upload a file
+                    <input
+                      type="file"
+                      id="file-upload"
+                      className="sr-only"
+                      onChange={handleAvatarChange}
+                    />
+                  </label>
+                  <p className="text-xs leading-5 text-gray-400">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <button
+            type="submit"
+            className="w-full py-2 px-4 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Update Profile"}
+          </button>
+        </div>
+
+        {errMsg && <p className="mt-2 text-sm text-red-500">{errMsg}</p>}
+      </form>
+
+      {/* Password Change Section */}
+      <form
+        onSubmit={handleChangePassword}
+        className="max-w-5xl mx-auto mt-8 pt-10 px-10 lg:px-0 text-white"
+      >
+        <div className="border-b border-b-white/10 pb-5">
+          <h2 className="text-lg font-semibold uppercase leading-7">
+            Change Password
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-gray-400">
+            Update your password securely.
+          </p>
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="currentPassword"
+              className="block text-sm font-medium"
+            >
+              Current Password
+            </label>
             <input
               type="password"
               name="currentPassword"
-              placeholder="Current Password"
+              id="currentPassword"
               required
-              className="block w-full border p-2 rounded"
+              className="mt-1 p-2 block w-full rounded-md bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-gray-600 focus:outline-none"
             />
+          </div>
+
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="newPassword"
+              className="block text-sm font-medium"
+            >
+              New Password
+            </label>
             <input
               type="password"
               name="newPassword"
-              placeholder="New Password"
+              id="newPassword"
               required
-              className="block w-full border p-2 rounded"
+              className="mt-1 p-2 block w-full rounded-md bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-gray-600 focus:outline-none"
             />
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              {loading ? "Updating..." : "Change Password"}
-            </button>
-          </form>
-        )}
+          </div>
+        </div>
 
-        {errMsg && <p className="text-red-500">{errMsg}</p>}
-      </div>
+        <div className="mt-6">
+          <button
+            type="submit"
+            className="w-full mb-5 py-2 px-4 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Change Password"}
+          </button>
+        </div>
+
+        {errMsg && <p className="mt-2 text-sm text-red-500">{errMsg}</p>}
+      </form>
     </div>
   );
 };

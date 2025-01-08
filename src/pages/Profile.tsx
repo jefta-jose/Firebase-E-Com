@@ -22,7 +22,6 @@ const Profile = () => {
     <Container>
       {currentUser ? <UserInfo currentUser={currentUser} /> : <Registration />}
       {currentUser ? <UpdateUserDetails currentUser={currentUser} /> : <></>}
-
       {isLoading && <Loading />}
     </Container>
   );

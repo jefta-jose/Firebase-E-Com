@@ -15,7 +15,6 @@ interface UserType {
   email: string;
   avatar: string;
   id: string;
-  location: string;
 }
 
 interface StoreType {

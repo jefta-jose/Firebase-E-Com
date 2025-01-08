@@ -82,7 +82,7 @@ const Registration = () => {
                 Registration Form
               </h2>
               <p className="mt-1 text-sm leading-6 text-gray-400">
-                You need to provide required information to get register with
+                You need to provide required information to get registered with
                 us.
               </p>
             </div>
