@@ -4,8 +4,10 @@ import Title from "./Title";
 import Pagination from "./Pagination";
 
 const ProductList = () => {
+
+  const userRole = localStorage.getItem('myKey')
   return (
-    <Container>
+    <Container className={userRole === "admin" ? "hidden" : "visible"}>
       <div className="mb-10">
         <div className="flex items-center justify-between">
           <Title text="Top Selling Products" />

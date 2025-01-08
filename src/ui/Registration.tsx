@@ -20,6 +20,8 @@ const Registration = () => {
     url: "",
   });
 
+  const role = "customer";
+
   const handleAvatar = (e: any) => {
     if (e.target.files[0]) {
       setAvatar({
@@ -31,7 +33,7 @@ const Registration = () => {
   const handleRegistration = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const { firstName, lastName, email, password , role }: any =
+    const { firstName, lastName, email, password }: any =
       Object.fromEntries(formData);
     try {
       setLoading(true);
@@ -126,14 +128,6 @@ const Registration = () => {
                   />
                 </div>
 
-                <div className="sm:col-span-2">
-                  <Label title="Role" htmlFor="role" />
-                  <input
-                    type="role"
-                    name="role"
-                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
-                  />
-                </div>
                 <div className="col-span-full">
                   <div className="mt-2 flex items-center gap-x-3">
                     <div className="flex-1">

@@ -22,8 +22,10 @@ const DiscountedBanner = () => {
     { title: "Laptop & Computers", link: "computersAndLaptop" },
     { title: "Cell Phone", link: "cellPhones" },
   ];
+
+  const userRole = localStorage.getItem('myKey')
   return (
-    <Container>
+    <Container className={userRole === "admin" ? "hidden" : "visible"}>
       <div>
         <Title text="Popular Search" />
         <div className="w-full h-[1px] bg-gray-200 mt-3" />

@@ -25,8 +25,10 @@ const FooterTop = () => {
         "If you don't like it, trade it to one of your friends for something of theirs. Don't send it here though.",
     },
   ];
+
+  const userRole = localStorage.getItem('myKey')
   return (
-    <Container className="py-0">
+    <Container className={userRole === "admin" ? "hidden" : "py-0"}>
       <div className=" rounded-2xl bg-[#f6f6f6] px-6 py-16 sm:p-16">
         <div className="mx-auto max-w-xl lg:max-w-none">
           <div className="text-center">

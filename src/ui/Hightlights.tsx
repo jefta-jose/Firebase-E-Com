@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "./Container";
-import { getData } from "../lib";
-import { config } from "../../config";
 import { HighlightsType } from "../../type";
 import { Link } from "react-router-dom";
 
 import { db } from "../lib/firebase";
-import { getDocs, collection, } from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 
 const Hightlights = () => {
   const [highlightsData, setHighlightsData] = useState([]);
+  const highlightsCollection = collection(db, 'highlightsProducts');
 
-  const highlightsCollection = collection(db, 'highlightsProducts')
+  const userRole = localStorage.getItem('myKey')
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const querySnapshot = await getDocs(highlightsCollection);
         const highlightList = querySnapshot.docs.map((doc) => ({
-          _id: doc.id,  // Store the document ID
-          ...doc.data(),  // Spread the document data
+          _id: doc.id,
+          ...doc.data(),
         }));
         setHighlightsData(highlightList);
       } catch (error) {
@@ -28,8 +28,9 @@ const Hightlights = () => {
 
     fetchData();
   }, []);
+
   return (
-    <Container className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <Container className={userRole === "admin" ? "hidden" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"}>
       {highlightsData.map((item: HighlightsType) => (
         <div
           key={item?._id}
