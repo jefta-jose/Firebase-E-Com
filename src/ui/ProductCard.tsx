@@ -48,7 +48,7 @@ const ProductCard = ({ item, setSearchText }: Props) => {
           onClick={handleProduct}
           src={item?.images[0]}
           alt="productImage"
-          className="w-full h-full rounded-md object-cover group-hover:scale-110 duration-300"
+          className="p-3 w-full h-full rounded-md object-cover group-hover:scale-110 duration-300 "
         />
         <ProductCardSideNav product={item} />
       </div>

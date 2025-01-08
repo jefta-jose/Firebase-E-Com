@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { config } from "../../config";
-import { getData } from "../lib";
+import { useEffect, useState } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import { CategoryProps } from "../../type";
 import { Link } from "react-router-dom";
-
 import { db } from "../lib/firebase";
 import { getDocs, collection } from "firebase/firestore";
+
 
 const CategoryFilters = ({ id }: { id: string | undefined }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
-    const categoryCollection = collection(db, "categories");
+  const categoryCollection = collection(db, "categories");
   
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +32,7 @@ const CategoryFilters = ({ id }: { id: string | undefined }) => {
 
     fetchData();
   }, []);
+
   return (
     <div className="hidden md:inline-flex flex-col gap-6">
       <p className="text-3xl font-bold">Filters</p>
