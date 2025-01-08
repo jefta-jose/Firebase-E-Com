@@ -2,9 +2,13 @@ import toast from "react-hot-toast";
 import { UserTypes } from "../../type";
 import { auth } from "../lib/firebase";
 import Container from "./Container";
+import { useState } from "react";
+import UpdateUserDetails from "./updateUserDetails";
 
 const UserInfo = ({ currentUser }: UserTypes) => {
   console.log(currentUser);
+
+  const [updateDetails , setupdateDetails] = useState(false)
 
   return (
     <Container className="py-5 text-white">
@@ -37,14 +41,24 @@ const UserInfo = ({ currentUser }: UserTypes) => {
             </h2>
           </div>
         </div>
-        <div className="mt-10 flex items-center gap-x-5 px-4">
+        <div className="mt-10 flex flex-col md:flex-row  items-center gap-x-5 px-4 gap-y-4">
           <button
             onClick={() => auth.signOut()}
             className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold  text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           >
             Logout
           </button>
+
+          <button
+            onClick={()=>setupdateDetails(true)}
+            className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold  text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          >
+            Update Profile
+          </button>
         </div>
+            
+            {updateDetails && <UpdateUserDetails currentUser={currentUser}/>}
+
         <svg
           viewBox="0 0 1024 1024"
           className="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]"

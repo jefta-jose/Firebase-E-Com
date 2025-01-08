@@ -6,7 +6,6 @@ import Container from "../ui/Container";
 import Registration from "../ui/Registration";
 import UserInfo from "../ui/UserInfo";
 import Loading from "../ui/Loading";
-import UpdateUserDetails from "../ui/updateUserDetails";
 
 const Profile = () => {
   const { currentUser, getUserInfo, isLoading } = store();
@@ -21,7 +20,6 @@ const Profile = () => {
   return (
     <Container>
       {currentUser ? <UserInfo currentUser={currentUser} /> : <Registration />}
-      {currentUser ? <UpdateUserDetails currentUser={currentUser} /> : <></>}
       {isLoading && <Loading />}
     </Container>
   );

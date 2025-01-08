@@ -12,13 +12,12 @@ import { IoClose, IoSearchOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { logo } from "../assets";
 import Container from "./Container";
-import { config } from "../../config";
 import { CategoryProps, ProductProps } from "../../type";
 import ProductCard from "./ProductCard";
 import { store } from "../lib/store";
 
 import { db } from "../lib/firebase";
-import { getDocs, collection, doc, getDoc } from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 
 const bottomNavigation = [
   { title: "Home", link: "/" },

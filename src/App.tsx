@@ -13,11 +13,13 @@ function App() {
       <HomeBanner />
       <Hightlights />
       <Categories />
+
       {/* ProductList */}
       <ProductList />
+
       {/* DiscountedBanner */}
       <DiscountedBanner />
-      {/* Blog */}
+
     </main>
   );
 }

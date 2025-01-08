@@ -103,7 +103,8 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
   };
 
   return (
-    <div className="bg-gray-950 rounded-lg">
+
+    <div className="bg-gray-950 rounded-lg mt-10">
       <form
         onSubmit={handleUpdatingDetails}
         className="max-w-5xl mx-auto pt-10 px-10 lg:px-0 text-white"
@@ -277,6 +278,8 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
         {errMsg && <p className="mt-2 text-sm text-red-500">{errMsg}</p>}
       </form>
     </div>
+
+
   );
 };
 
