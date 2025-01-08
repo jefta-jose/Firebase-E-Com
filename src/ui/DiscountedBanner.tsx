@@ -12,6 +12,7 @@ import {
   discountImgOne,
   discountImgTwo,
 } from "../assets";
+import { getUserRole } from "../lib/localStore";
 
 const DiscountedBanner = () => {
   const popularSearchItems = [
@@ -23,7 +24,8 @@ const DiscountedBanner = () => {
     { title: "Cell Phone", link: "cellPhones" },
   ];
 
-  const userRole = localStorage.getItem('myKey')
+  const userRole = getUserRole();
+  
   return (
     <Container className={userRole === "admin" ? "hidden" : "visible"}>
       <div>

@@ -1,11 +1,12 @@
-import React from "react";
 import Container from "./Container";
 import { payment } from "../assets";
 import FooterTop from "./FooterTop";
+import { getUserRole } from "../lib/localStore";
 
 const Footer = () => {
 
-  const userRole = localStorage.getItem('myKey')
+  const userRole = getUserRole();
+  
   return (
     <div className={ userRole === "admin" ? "hidden" : "mt-10"}>
       <FooterTop />

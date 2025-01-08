@@ -51,6 +51,7 @@ const Registration = () => {
         role,
       });
       setLogin(true);
+
     } catch (error: any) {
       let errorMessage;
       switch (error.code) {
@@ -71,9 +72,9 @@ const Registration = () => {
       setErrMsg(errorMessage);
     } finally {
       setLoading(false);
-      navigate("/profile")
     }
   };
+
   return (
     <div>
       {login ? (

@@ -3,9 +3,9 @@ import Container from "./Container";
 import Title from "./Title";
 import { Link } from "react-router-dom";
 import { CategoryProps } from "../../type";
-
 import { db } from "../lib/firebase";
 import { getDocs, collection} from "firebase/firestore";
+import { getUserRole } from "../lib/localStore";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -29,7 +29,7 @@ const Categories = () => {
     fetchData();
   }, []);
 
-  const userRole = localStorage.getItem('myKey');
+  const userRole = getUserRole();
   
   return (
     <Container className={userRole === "admin" ? "hidden" : "visible"}>

@@ -1,10 +1,10 @@
 import { homeBanner } from "../assets";
+import { getUserRole } from "../lib/localStore";
 import Container from "./Container";
 import LinkButton from "./LinkButton";
-import { useState } from "react";
 
 const HomeBanner = () => {
-  const userRole = localStorage.getItem('myKey')
+  const userRole = getUserRole();
 
   return (
     <div>

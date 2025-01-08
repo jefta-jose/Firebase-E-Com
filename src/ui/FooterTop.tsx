@@ -1,5 +1,6 @@
 import React from "react";
 import Container from "./Container";
+import { getUserRole } from "../lib/localStore";
 
 const FooterTop = () => {
   const incentives = [
@@ -26,7 +27,7 @@ const FooterTop = () => {
     },
   ];
 
-  const userRole = localStorage.getItem('myKey')
+  const userRole = getUserRole();
   return (
     <Container className={userRole === "admin" ? "hidden" : "py-0"}>
       <div className=" rounded-2xl bg-[#f6f6f6] px-6 py-16 sm:p-16">

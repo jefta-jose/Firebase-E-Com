@@ -18,6 +18,7 @@ import { store } from "../lib/store";
 
 import { db } from "../lib/firebase";
 import { getDocs, collection } from "firebase/firestore";
+import { getUserRole } from "../lib/localStore";
 
 const bottomNavigation = [
   { title: "Home", link: "/" },
@@ -80,6 +81,12 @@ const Header = () => {
     );
     setFilteredProducts(filtered);
   }, [searchText]);
+
+  const userRole = getUserRole();
+
+  const filteredNavigation = userRole === "admin" 
+  ? bottomNavigation.filter(nav => nav.title !== "Cart") 
+  : bottomNavigation;
 
   return (
     <div className="w-full bg-whiteText md:sticky md:top-0 z-50">
@@ -194,7 +201,7 @@ const Header = () => {
               </MenuItems>
             </Transition>
           </Menu>
-          {bottomNavigation.map(({ title, link }) => (
+          {filteredNavigation.map(({ title, link }) => (
             <Link
               to={link}
               key={title}

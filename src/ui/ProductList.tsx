@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import Container from "./Container";
 import Title from "./Title";
 import Pagination from "./Pagination";
+import { getUserRole } from "../lib/localStore";
 
 const ProductList = () => {
 
-  const userRole = localStorage.getItem('myKey')
+  const userRole = getUserRole();
+  
   return (
     <Container className={userRole === "admin" ? "hidden" : "visible"}>
       <div className="mb-10">

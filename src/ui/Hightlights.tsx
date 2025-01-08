@@ -5,12 +5,13 @@ import { Link } from "react-router-dom";
 
 import { db } from "../lib/firebase";
 import { getDocs, collection } from "firebase/firestore";
+import { getUserRole } from "../lib/localStore";
 
 const Hightlights = () => {
   const [highlightsData, setHighlightsData] = useState([]);
   const highlightsCollection = collection(db, 'highlightsProducts');
 
-  const userRole = localStorage.getItem('myKey')
+  const userRole = getUserRole();
 
   useEffect(() => {
     const fetchData = async () => {
