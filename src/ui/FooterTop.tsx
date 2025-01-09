@@ -29,7 +29,7 @@ const FooterTop = () => {
 
   const userRole = getUserRole();
   return (
-    <Container className={userRole === "admin" ? "hidden" : "py-0"}>
+    <Container className={userRole === "admin" ? "hidden" : "visible"}>
       <div className=" rounded-2xl bg-[#f6f6f6] px-6 py-16 sm:p-16">
         <div className="mx-auto max-w-xl lg:max-w-none">
           <div className="text-center">

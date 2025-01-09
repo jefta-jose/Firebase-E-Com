@@ -15,6 +15,8 @@ import CategoryFilters from "../ui/CategoryFilters";
 import _ from "lodash";
 import { db } from "../lib/firebase";
 import { getDocs, collection, doc, getDoc } from "firebase/firestore";
+import { getUserRole } from "../lib/localStore";
+import AdminCreateProduct from "../ui/AdminCreateProduct";
 
 const Product = () => {
   const [productData, setProductData] = useState<ProductProps | null>(null);
@@ -23,6 +25,10 @@ const Product = () => {
   const [imgUrl, setImgUrl] = useState("");
   const [color, setColor] = useState("");
   const { id } = useParams();
+
+  const [addProductModal , setAddProductModal] = useState(false);
+
+
 
     // Firestore collection reference
     const productsCollection = collection(db, "products");
@@ -73,6 +79,8 @@ const Product = () => {
       setColor(productData?.colors[0]);
     }
   }, [productData]);
+
+  const userRole = getUserRole();
 
   return (
     <div>
@@ -217,6 +225,18 @@ const Product = () => {
                 <p className="text-4xl font-semibold mb-5 text-center">
                   Products Collection
                 </p>
+
+                <div className={userRole === "admin" ? "visible" : "hidden"}>
+                <button
+                  onClick={() => setAddProductModal(true)}
+                  className="px-4 py-2 my-2 bg-indigo-500 text-white rounded-md disabled:opacity-50"
+                >
+                  Add Product
+                </button>
+                {addProductModal && <AdminCreateProduct setAddProductModal={setAddProductModal} />}
+                </div>
+
+
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                   {allProducts?.map((item: ProductProps) => (
                     <ProductCard item={item} key={item?._id} />

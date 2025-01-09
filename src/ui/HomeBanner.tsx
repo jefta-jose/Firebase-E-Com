@@ -7,6 +7,8 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import AdminCreateUser from "./AdminCreateUser";
 import AdminCreateProduct from "./AdminCreateProduct";
+import AdminCreateHighlightedProduct from "./AdminCreateHighlightedProduct";
+import AdminCreateCategory from "./AdminCreateCategory";
 
 const HomeBanner = () => {
   const userRole = getUserRole();
@@ -259,6 +261,8 @@ const HomeBanner = () => {
                 >
                   Add Highlighted Product
                 </button>
+                {addhighlightedProductModal && <AdminCreateHighlightedProduct setAddhighlightedProductModal={setAddhighlightedProductModal} />}
+
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {paginatedHighlights.map((product, index) => (
@@ -306,6 +310,8 @@ const HomeBanner = () => {
                 >
                   Add Category
                 </button>
+                {addCategoryModal && <AdminCreateCategory setAddCategoryModal={setAddCategoryModal} />}
+
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {paginatedCategories.map((product, index) => (
