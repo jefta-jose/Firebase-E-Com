@@ -6,6 +6,7 @@ import LinkButton from "./LinkButton";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import AdminCreateUser from "./AdminCreateUser";
+import AdminCreateProduct from "./AdminCreateProduct";
 
 const HomeBanner = () => {
   const userRole = getUserRole();
@@ -210,6 +211,9 @@ const HomeBanner = () => {
                 >
                   Add Product
                 </button>
+                {addProductModal && <AdminCreateProduct setAddProductModal={setAddProductModal} />}
+
+
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {paginatedProducts.map((product, index) => (
                   <div
