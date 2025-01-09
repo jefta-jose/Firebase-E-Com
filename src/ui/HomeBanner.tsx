@@ -1,10 +1,36 @@
+import { useEffect, useState } from "react";
 import { homeBanner } from "../assets";
 import { getUserRole } from "../lib/localStore";
 import Container from "./Container";
 import LinkButton from "./LinkButton";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../lib/firebase";
+import { UserTypes } from "../../type";
 
 const HomeBanner = () => {
   const userRole = getUserRole();
+
+  const [allUsers , setAllUsers] = useState([]);
+
+  const usersCollection = collection(db, "users");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+          const querySnapshot = await getDocs(usersCollection);
+          const usersList = querySnapshot.docs.map((doc) => ({
+            _id: doc.id,  // Store the document ID
+            ...doc.data(),  // Spread the document data
+          }));
+          setAllUsers(usersList);
+        }
+      catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
+  },[]);
 
   return (
     <div>

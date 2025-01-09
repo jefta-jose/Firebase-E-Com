@@ -1,4 +1,3 @@
-import toast from "react-hot-toast";
 import { UserTypes } from "../../type";
 import { auth } from "../lib/firebase";
 import Container from "./Container";
@@ -6,7 +5,6 @@ import { useState } from "react";
 import UpdateUserDetails from "./updateUserDetails";
 
 const UserInfo = ({ currentUser }: UserTypes) => {
-  console.log(currentUser);
 
   const [updateDetails , setupdateDetails] = useState(false)
 

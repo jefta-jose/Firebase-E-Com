@@ -7,29 +7,15 @@ import { auth, db } from "../lib/firebase";
 import upload from "../lib/upload";
 import { doc, setDoc } from "firebase/firestore";
 import Login from "./Login";
-import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
-  const navigate = useNavigate();
 
   const [login, setLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const [avatar, setAvatar] = useState({
-    file: null,
-    url: "",
-  });
 
   const role = "customer";
 
-  const handleAvatar = (e: any) => {
-    if (e.target.files[0]) {
-      setAvatar({
-        file: e.target.files[0],
-        url: URL.createObjectURL(e.target.files[0]),
-      });
-    }
-  };
   const handleRegistration = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -38,15 +24,12 @@ const Registration = () => {
     try {
       setLoading(true);
       const res = await createUserWithEmailAndPassword(auth, email, password);
-      let imageUrl = null;
-      if (avatar && avatar?.file) {
-        imageUrl = await upload(avatar?.file);
-      }
+
       await setDoc(doc(db, "users", res.user.uid), {
         firstName,
         lastName,
         email,
-        avatar: imageUrl,
+        avatar: "imageUrl",
         id: res.user.uid,
         role,
       });
@@ -129,46 +112,16 @@ const Registration = () => {
                   />
                 </div>
 
-                <div className="col-span-full">
-                  <div className="mt-2 flex items-center gap-x-3">
-                    <div className="flex-1">
-                      <Label title="Cover photo" />
-                      <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-4">
-                        <div className="flex flex-col items-center text-center">
-                          <div className="w-14 h-14 border border-gray-600 rounded-full p-1">
-                            {avatar?.url ? (
-                              <img
-                                src={avatar?.url}
-                                alt="userImage"
-                                className="w-full h-full rounded-full object-cover"
-                              />
-                            ) : (
-                              <MdPhotoLibrary className="mx-auto h-full w-full text-gray-500" />
-                            )}
-                          </div>
-                          <div className="mt-4 flex items-center mb-1 text-sm leading-6 text-gray-400">
-                            <label htmlFor="file-upload">
-                              <span className="relative cursor-pointer rounded-md px-2 py-1 bg-gray-900 font-semibold text-gray-200 hover:bg-gray-800">
-                                Upload a file
-                              </span>
-                              <input
-                                type="file"
-                                name="file-upload"
-                                id="file-upload"
-                                className="sr-only"
-                                onChange={handleAvatar}
-                              />
-                            </label>
-                            <p className="pl-1">or drag and drop</p>
-                          </div>
-                          <p className="text-xs leading-5 text-gray-400">
-                            PNG, JPG, GIF up to 10MB
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/**manually add a role */}
+                {/* <div className="sm:col-span-2">
+                  <Label title="Role" htmlFor="role" />
+                  <input
+                    type="role"
+                    name="role"
+                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
+                  />
+                </div> */}
+
               </div>
             </div>
             {errMsg && (

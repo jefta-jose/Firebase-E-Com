@@ -10,7 +10,6 @@ export const getUserRole = () => {
         // Access the role property
         const role = parsedData.state?.currentUser?.role;
   
-        console.log('User Role:', role);
         return role;
       } catch (error) {
         console.error('Error parsing local storage data:', error);

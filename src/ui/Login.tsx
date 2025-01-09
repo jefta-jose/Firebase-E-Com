@@ -18,6 +18,8 @@ const Login = ({ setLogin }: { setLogin: any }) => {
       const { email, password }: any = Object.fromEntries(formData);
 
       await signInWithEmailAndPassword(auth, email, password);
+
+      console.log("entered via login");
     } catch (error: any) {
       let errorMessage;
       switch (error.code) {
