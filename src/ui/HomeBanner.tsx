@@ -10,6 +10,7 @@ import AdminCreateProduct from "./AdminCreateProduct";
 import AdminCreateHighlightedProduct from "./AdminCreateHighlightedProduct";
 import AdminCreateCategory from "./AdminCreateCategory";
 
+
 const HomeBanner = () => {
   const userRole = getUserRole();
 
@@ -95,6 +96,8 @@ const HomeBanner = () => {
 
 
   const ITEMS_PER_PAGE = 5; // Define items per page
+  const USERS_PER_PAGE = 8; // Define items per page
+
 
   // States for pagination
   const [userPage, setUserPage] = useState(1);
@@ -108,8 +111,13 @@ const HomeBanner = () => {
     return data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   };
 
+  const paginateUsers = (data, page) => {
+    const startIndex = (page - 1) * USERS_PER_PAGE;
+    return data.slice(startIndex, startIndex + USERS_PER_PAGE);
+  };
+
   // Paginated data
-  const paginatedUsers = paginate(allUsers, userPage);
+  const paginatedUsers = paginateUsers(allUsers, userPage);
   const paginatedProducts = paginate(allProducts, productPage);
   const paginatedHighlights = paginate(allHighlightProducts, highlightPage);
   const paginatedCategories = paginate(allCategories, categoryPage);
@@ -159,6 +167,13 @@ const HomeBanner = () => {
               <h2 className=" md:text-2xl font-semibold text-gray-700 mb-4">Registered Users</h2>
               </div>
 
+              <div className=" flex items-center gap-x-2">
+              <h2 className=" md:text-2xl font-bold text-indigo-600 mb-4">
+                {allUsers.filter((user) => user.role === "admin").length}
+              </h2>
+              <h2 className=" md:text-2xl font-semibold text-gray-700 mb-4">Admin Users</h2>
+              </div>
+
               <button
               onClick={() => setAddUserModal(true)}
                   className="px-4 py-2 my-2 bg-indigo-500 text-white rounded-md disabled:opacity-50"
@@ -167,18 +182,40 @@ const HomeBanner = () => {
                 </button>
                 {addUserModal && <AdminCreateUser setAddUserModal={setAddUserModal}/>}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {paginatedUsers
-                .filter((user) => user.role !== "admin")
-                .map((user, index) => (
-                  <div
-                    key={index}
-                    className="p-4 bg-gray-50 rounded-md shadow hover:shadow-lg transition"
-                  >
-                    <p className="text-gray-800 font-medium">{user.firstName} {user.lastName}</p>
-                  </div>
-                ))}
+                <div className="overflow-x-auto">
+                <table className="min-w-full bg-white rounded-md shadow">
+                  <caption className="text-lg font-semibold py-2">Users List</caption>
+                  <thead>
+                    <tr className="bg-gray-100 text-gray-700">
+                      <th className="py-2 px-4 text-left">Name</th>
+                      <th className="py-2 px-4 text-left">Email</th>
+                      <th className="py-2 px-4 text-left">Role</th>
+                      <th className="py-2 px-4 text-left">Avatar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedUsers.map((user, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="py-2 px-4 text-gray-800">
+                          {user.firstName} {user.lastName}
+                        </td>
+                        <td className="py-2 px-4 text-gray-800">{user.email}</td>
+                        <td className="py-2 px-4 text-gray-800">{user.role}</td>
+                        <td className="py-2 px-4">
+                          <img
+                            src={user.avatar}
+                            alt={`${user.firstName}'s avatar`}
+                            className="w-10 h-10 rounded-full"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+
+
+
               {/* Pagination Controls */}
               <div className="mt-4 flex justify-between">
                 <button
