@@ -35,14 +35,6 @@ export interface ProductProps {
   brand: string;
 }
 
-export interface BlogProps {
-  _id: number;
-  image: string;
-  title: string;
-  description: string;
-  _base: string;
-}
-
 export interface UserTypes {
   currentUser: {
     firstName: string;

@@ -1,10 +1,8 @@
 import { useState } from "react";
 ("./Login");
 import Label from "./Label";
-import { MdPhotoLibrary } from "react-icons/md";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
-import upload from "../lib/upload";
 import { doc, setDoc } from "firebase/firestore";
 import Login from "./Login";
 
