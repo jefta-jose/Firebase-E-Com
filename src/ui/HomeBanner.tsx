@@ -5,40 +5,26 @@ import Container from "./Container";
 import LinkButton from "./LinkButton";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import AdminCreateUser from "./AdminCreateUser";
 import AdminCreateProduct from "./AdminCreateProduct";
 import AdminCreateHighlightedProduct from "./AdminCreateHighlightedProduct";
 import AdminCreateCategory from "./AdminCreateCategory";
+import UsersSection from "@/sections/UsersSection";
 
 
 const HomeBanner = () => {
   const userRole = getUserRole();
 
-  const [allUsers , setAllUsers] = useState([]);
   const [allProducts , setallProducts] = useState([]);
   const [allHighlightProducts , setallHighlightProducts] = useState([]);
   const [allCategories , setallCategories] = useState([]);
 
 
-  const usersCollection = collection(db, "users");
   const productsCollection = collection(db, "products");
   const highlightsCollection = collection(db, "highlightsProducts");
   const categoriesCollection = collection(db, "categories");
 
   useEffect(() => {
-    const fetchAllUsers = async () => {
-      try {
-          const querySnapshot = await getDocs(usersCollection);
-          const usersList = querySnapshot.docs.map((doc) => ({
-            _id: doc.id,  // Store the document ID
-            ...doc.data(),  // Spread the document data
-          }));
-          setAllUsers(usersList);
-        }
-      catch (error) {
-        console.error("Error fetching data", error);
-      }
-    };
+
 
     const fetchAllProducts = async () => {
       try {
@@ -82,25 +68,21 @@ const HomeBanner = () => {
       }
     };
 
-    fetchAllUsers();
     fetchAllProducts();
     fetchAllHighlightProducts();
     fetchAllCategories();
 
   },[]);
 
-  const [addUserModal , setAddUserModal] = useState(false);
   const [addProductModal , setAddProductModal] = useState(false);
   const [addhighlightedProductModal , setAddhighlightedProductModal] = useState(false);
   const [addCategoryModal , setAddCategoryModal] = useState(false);
 
 
   const ITEMS_PER_PAGE = 5; // Define items per page
-  const USERS_PER_PAGE = 8; // Define items per page
 
 
   // States for pagination
-  const [userPage, setUserPage] = useState(1);
   const [productPage, setProductPage] = useState(1);
   const [highlightPage, setHighlightPage] = useState(1);
   const [categoryPage, setCategoryPage] = useState(1);
@@ -111,19 +93,14 @@ const HomeBanner = () => {
     return data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   };
 
-  const paginateUsers = (data, page) => {
-    const startIndex = (page - 1) * USERS_PER_PAGE;
-    return data.slice(startIndex, startIndex + USERS_PER_PAGE);
-  };
+
 
   // Paginated data
-  const paginatedUsers = paginateUsers(allUsers, userPage);
   const paginatedProducts = paginate(allProducts, productPage);
   const paginatedHighlights = paginate(allHighlightProducts, highlightPage);
   const paginatedCategories = paginate(allCategories, categoryPage);
 
   // Total pages for each dataset
-  const totalUserPages = Math.ceil(allUsers.length / ITEMS_PER_PAGE);
   const totalProductPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
   const totalHighlightPages = Math.ceil(allHighlightProducts.length / ITEMS_PER_PAGE);
   const totalCategoryPages = Math.ceil(allCategories.length / ITEMS_PER_PAGE);
@@ -158,83 +135,7 @@ const HomeBanner = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
 
             {/* Users Section with Pagination */}
-            <div className="mb-8 p-6 bg-white rounded-lg shadow-md">
-              
-              <div className=" flex items-center gap-x-2">
-              <h2 className=" md:text-2xl font-bold text-indigo-600 mb-4">
-                {allUsers.filter((user) => user.role !== "admin").length}
-              </h2>
-              <h2 className=" md:text-2xl font-semibold text-gray-700 mb-4">Registered Users</h2>
-              </div>
-
-              <div className=" flex items-center gap-x-2">
-              <h2 className=" md:text-2xl font-bold text-indigo-600 mb-4">
-                {allUsers.filter((user) => user.role === "admin").length}
-              </h2>
-              <h2 className=" md:text-2xl font-semibold text-gray-700 mb-4">Admin Users</h2>
-              </div>
-
-              <button
-              onClick={() => setAddUserModal(true)}
-                  className="px-4 py-2 my-2 bg-indigo-500 text-white rounded-md disabled:opacity-50"
-                >
-                  Add User
-                </button>
-                {addUserModal && <AdminCreateUser setAddUserModal={setAddUserModal}/>}
-
-                <div className="overflow-x-auto">
-                <table className="min-w-full bg-white rounded-md shadow">
-                  <caption className="text-lg font-semibold py-2">Users List</caption>
-                  <thead>
-                    <tr className="bg-gray-100 text-gray-700">
-                      <th className="py-2 px-4 text-left">Name</th>
-                      <th className="py-2 px-4 text-left">Email</th>
-                      <th className="py-2 px-4 text-left">Role</th>
-                      <th className="py-2 px-4 text-left">Avatar</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedUsers.map((user, index) => (
-                      <tr key={index} className="border-b hover:bg-gray-50">
-                        <td className="py-2 px-4 text-gray-800">
-                          {user.firstName} {user.lastName}
-                        </td>
-                        <td className="py-2 px-4 text-gray-800">{user.email}</td>
-                        <td className="py-2 px-4 text-gray-800">{user.role}</td>
-                        <td className="py-2 px-4">
-                          <img
-                            src={user.avatar}
-                            alt={`${user.firstName}'s avatar`}
-                            className="w-10 h-10 rounded-full"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-
-
-              {/* Pagination Controls */}
-              <div className="mt-4 flex justify-between">
-                <button
-                  className="px-4 py-2 bg-indigo-500 text-white rounded-md disabled:opacity-50"
-                  onClick={() => setUserPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={userPage === 1}
-                >
-                  Previous
-                </button>
-                <span className="text-gray-700 text-sm p-2">Page {userPage} of {totalUserPages}</span>
-                <button
-                  className="px-4 py-2 bg-indigo-500 text-white rounded-md disabled:opacity-50"
-                  onClick={() => setUserPage((prev) => Math.min(prev + 1, totalUserPages))}
-                  disabled={userPage === totalUserPages}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+            <UsersSection/>
 
             {/* Products Section */}
             <div className="mb-8 p-6 bg-white rounded-lg shadow-md">
