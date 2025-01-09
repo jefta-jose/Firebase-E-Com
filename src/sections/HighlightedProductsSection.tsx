@@ -1,42 +1,52 @@
 import { db } from '@/lib/firebase';
 import AdminCreateHighlightedProduct from '@/ui/AdminCreateHighlightedProduct';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 
 const HighlightedProductsSection = () => {
-      const [allHighlightProducts , setallHighlightProducts] = useState([]);
-        const highlightsCollection = collection(db, "highlightsProducts");
-      
-        useEffect(()=>{
-            const fetchAllHighlightProducts = async () => {
-                try {
-                    const querySnapshot = await getDocs(highlightsCollection);
-                    const highlightProductsList = querySnapshot.docs.map((doc) => ({
-                    _id: doc.id,  // Store the document ID
-                    ...doc.data(),  // Spread the document data
-                    }));
-                    setallHighlightProducts(highlightProductsList);
-                }
-                catch (error) {
-                console.error("Error fetching data", error);
-                }
-            };
+    const [allHighlightProducts , setallHighlightProducts] = useState([]);
+    const highlightsCollection = collection(db, "highlightsProducts");
 
-            fetchAllHighlightProducts();
-        }, [])
-
-  const [addhighlightedProductModal , setAddhighlightedProductModal] = useState(false);
-  const ITEMS_PER_PAGE = 5; // Define items per page
-  const [highlightPage, setHighlightPage] = useState(1);
-
+    const [addhighlightedProductModal , setAddhighlightedProductModal] = useState(false);
+    const ITEMS_PER_PAGE = 5; // Define items per page
+    const [highlightPage, setHighlightPage] = useState(1);
+  
     // Helper function to paginate data
     const paginate = (data, page) => {
         const startIndex = (page - 1) * ITEMS_PER_PAGE;
         return data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
       };
+  
+    const paginatedHighlights = paginate(allHighlightProducts, highlightPage);
+    const totalHighlightPages = Math.ceil(allHighlightProducts.length / ITEMS_PER_PAGE);
+      
+    useEffect(()=>{
+        const fetchAllHighlightProducts = async () => {
+            try {
+                const querySnapshot = await getDocs(highlightsCollection);
+                const highlightProductsList = querySnapshot.docs.map((doc) => ({
+                _id: doc.id,  // Store the document ID
+                ...doc.data(),  // Spread the document data
+                }));
+                setallHighlightProducts(highlightProductsList);
+            }
+            catch (error) {
+            console.error("Error fetching data", error);
+            }
+        };
 
-  const paginatedHighlights = paginate(allHighlightProducts, highlightPage);
-  const totalHighlightPages = Math.ceil(allHighlightProducts.length / ITEMS_PER_PAGE);
+        fetchAllHighlightProducts();
+    }, [])
+
+    const handleDeletingHighlightProduct = async (HighlightProductId: string) => {
+      try {
+        const highlightProductDoc = doc(highlightsCollection, HighlightProductId); // Get a reference to the document
+        await deleteDoc(highlightProductDoc); // Delete the document
+        console.log("Document deleted successfully");
+      } catch (error) {
+        console.log("Error deleting document", error);
+      }
+    };
         
     
   return (
@@ -66,7 +76,9 @@ const HighlightedProductsSection = () => {
           <p className="text-sm text-gray-600">{product.description}</p>
 
           <div className=' grid grid-cols-1 md:grid-cols-2 py-2 gap-4'>
-            <button className='bg-red-500 rounded-sm py-2'>Delete</button>
+            <button 
+            onClick={()=> handleDeletingHighlightProduct(product._id)}
+            className='bg-red-500 rounded-sm py-2'>Delete</button>
             <button className='bg-purple-500 rounded-sm py-2'>Update</button>
           </div>
         </div>

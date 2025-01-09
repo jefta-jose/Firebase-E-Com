@@ -40,7 +40,6 @@ const ProductsSection = () => {
 
 
   const handleDeletingProduct = async (productId: string) => {
-    console.log(productId , "product id");
     try {
       const productDoc = doc(productsCollection, productId); // Get a reference to the document
       await deleteDoc(productDoc); // Delete the document
