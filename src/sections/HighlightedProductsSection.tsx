@@ -64,6 +64,11 @@ const HighlightedProductsSection = () => {
         >
           <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
           <p className="text-sm text-gray-600">{product.description}</p>
+
+          <div className=' grid grid-cols-1 md:grid-cols-2 py-2 gap-4'>
+            <button className='bg-red-500 rounded-sm py-2'>Delete</button>
+            <button className='bg-purple-500 rounded-sm py-2'>Update</button>
+          </div>
         </div>
       ))}
     </div>

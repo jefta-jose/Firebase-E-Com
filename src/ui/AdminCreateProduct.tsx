@@ -36,6 +36,7 @@ const AdminCreateProduct = ({ setAddProductModal }) => {
     }
   };
 
+
   const handleCancel = () => {
     setAddProductModal(false);
   };

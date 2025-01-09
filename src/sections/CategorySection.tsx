@@ -4,44 +4,41 @@ import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const CategorySection = () => {
-      const [allCategories , setallCategories] = useState([]);
-      const categoriesCollection = collection(db, "categories");
+  const [allCategories , setallCategories] = useState([]);
+  const categoriesCollection = collection(db, "categories");
+  const [addCategoryModal , setAddCategoryModal] = useState(false);
+  const ITEMS_PER_PAGE = 5; // Define items per page
+  // States for pagination
+  const [categoryPage, setCategoryPage] = useState(1);
+  // Helper function to paginate data
+  const paginate = (data, page) => {
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    return data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  };
+  // Paginated data
+  const paginatedCategories = paginate(allCategories, categoryPage);
+  // Total pages for each dataset
+  const totalCategoryPages = Math.ceil(allCategories.length / ITEMS_PER_PAGE);
 
-    useEffect(() => {
-        const fetchAllCategories = async () => {
-        try {
-            const querySnapshot = await getDocs(categoriesCollection);
-            const categoriesList = querySnapshot.docs.map((doc) => ({
-                _id: doc.id,  // Store the document ID
-                ...doc.data(),  // Spread the document data
-            }));
-            setallCategories(categoriesList);
-            }
-        catch (error) {
-            console.error("Error fetching data", error);
-        }
-        };
-    
-        fetchAllCategories();
-    
-    },[]);
+  useEffect(() => {
+      const fetchAllCategories = async () => {
+      try {
+          const querySnapshot = await getDocs(categoriesCollection);
+          const categoriesList = querySnapshot.docs.map((doc) => ({
+              _id: doc.id,  // Store the document ID
+              ...doc.data(),  // Spread the document data
+          }));
+          setallCategories(categoriesList);
+          }
+      catch (error) {
+          console.error("Error fetching data", error);
+      }
+      };
+  
+      fetchAllCategories();
+  
+  },[]);
 
-    const [addCategoryModal , setAddCategoryModal] = useState(false);
-    const ITEMS_PER_PAGE = 5; // Define items per page
-  
-    // States for pagination
-    const [categoryPage, setCategoryPage] = useState(1);
-  
-    // Helper function to paginate data
-    const paginate = (data, page) => {
-      const startIndex = (page - 1) * ITEMS_PER_PAGE;
-      return data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-    };
-  
-    // Paginated data
-    const paginatedCategories = paginate(allCategories, categoryPage);
-    // Total pages for each dataset
-    const totalCategoryPages = Math.ceil(allCategories.length / ITEMS_PER_PAGE);
 
   return (
     <div className="mb-8 p-6 bg-white rounded-lg shadow-md">
@@ -69,6 +66,11 @@ const CategorySection = () => {
         >
           <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
           <p className="text-sm text-gray-600">{product.description}</p>
+
+          <div className=' grid grid-cols-1 md:grid-cols-2 py-2 gap-4'>
+            <button className='bg-red-500 rounded-sm py-2'>Delete</button>
+            <button className='bg-purple-500 rounded-sm py-2'>Update</button>
+          </div>
         </div>
       ))}
     </div>
