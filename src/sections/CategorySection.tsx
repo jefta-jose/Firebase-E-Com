@@ -2,11 +2,14 @@ import { db } from "@/lib/firebase";
 import AdminCreateCategory from "@/ui/AdminCreateCategory";
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import AdminUpdateCategory from "./AdminUpdateCategory";
 
 const CategorySection = () => {
   const [allCategories , setallCategories] = useState([]);
   const categoriesCollection = collection(db, "categories");
+
   const [addCategoryModal , setAddCategoryModal] = useState(false);
+
   const ITEMS_PER_PAGE = 5; // Define items per page
   // States for pagination
   const [categoryPage, setCategoryPage] = useState(1);
@@ -49,6 +52,14 @@ const CategorySection = () => {
     }
   };
 
+  const [updateCategoryModal , setUpdateCategoryModal] = useState(false);
+  const [categoryObject , setCategoryObject] = useState({});
+
+  const populateCategoryObject = (categoryObj)=>{
+    setCategoryObject(categoryObj);
+    setUpdateCategoryModal(true);
+  }
+
 
   return (
     <div className="mb-8 p-6 bg-white rounded-lg shadow-md">
@@ -81,7 +92,14 @@ const CategorySection = () => {
             <button
             onClick={()=> handleDeletingCategory(category._id)}
             className='bg-red-500 rounded-sm py-2'>Delete</button>
-            <button className='bg-purple-500 rounded-sm py-2'>Update</button>
+
+            <button 
+            onClick={()=> populateCategoryObject(category)}
+
+            className='bg-purple-500 rounded-sm py-2'>Update</button>
+
+            {updateCategoryModal && <AdminUpdateCategory setUpdateCategoryModal={setUpdateCategoryModal} thatCategory={categoryObject} categoriesCollection={categoriesCollection}/>}
+
           </div>
         </div>
       ))}
@@ -104,6 +122,7 @@ const CategorySection = () => {
         Next
       </button>
     </div>
+
     </div>
   )
 }
