@@ -3,9 +3,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 
 
-const AdminUpdateCategory = ({setUpdateCategoryModal , thatCategory , categoriesCollection }) => {
-
-  console.log("thatCatgory:" , thatCategory);
+const AdminUpdateCategory = ({setUpdateCategoryModal , categoryObj , categoriesCollection }) => {
 
     const [loading, setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('');
@@ -26,7 +24,7 @@ const AdminUpdateCategory = ({setUpdateCategoryModal , thatCategory , categories
       );
     
       try {
-        const categoryDocRef = doc(categoriesCollection, thatCategory._id); // Get a reference to the document
+        const categoryDocRef = doc(categoriesCollection, categoryObj._id); // Get a reference to the document
     
         // Fetch the existing document data
         const existingDoc = await getDoc(categoryDocRef);
@@ -81,7 +79,7 @@ const AdminUpdateCategory = ({setUpdateCategoryModal , thatCategory , categories
               <input
                 type="text"
                 name="_base"
-                defaultValue={thatCategory._base}
+                defaultValue={categoryObj._base}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
               />
             </div>
@@ -91,7 +89,7 @@ const AdminUpdateCategory = ({setUpdateCategoryModal , thatCategory , categories
               <input
                 type="text"
                 name="description"
-                defaultValue={thatCategory.description}
+                defaultValue={categoryObj.description}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
               />
             </div>
@@ -101,7 +99,7 @@ const AdminUpdateCategory = ({setUpdateCategoryModal , thatCategory , categories
               <input
                 type="text"
                 name="image"
-                defaultValue={thatCategory.image}
+                defaultValue={categoryObj.image}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
               />
             </div>
@@ -111,7 +109,7 @@ const AdminUpdateCategory = ({setUpdateCategoryModal , thatCategory , categories
               <input
                 type="text"
                 name="name"
-                defaultValue={thatCategory.name}
+                defaultValue={categoryObj.name}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
               />
             </div>

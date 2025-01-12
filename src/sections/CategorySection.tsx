@@ -98,7 +98,7 @@ const CategorySection = () => {
 
             className='bg-purple-500 rounded-sm py-2'>Update</button>
 
-            {updateCategoryModal && <AdminUpdateCategory setUpdateCategoryModal={setUpdateCategoryModal} thatCategory={categoryObject} categoriesCollection={categoriesCollection}/>}
+            {updateCategoryModal && <AdminUpdateCategory setUpdateCategoryModal={setUpdateCategoryModal} categoryObj={categoryObject} categoriesCollection={categoriesCollection}/>}
 
           </div>
         </div>

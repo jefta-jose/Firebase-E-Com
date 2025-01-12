@@ -2,6 +2,7 @@ import { db } from '@/lib/firebase';
 import AdminCreateHighlightedProduct from '@/ui/AdminCreateHighlightedProduct';
 import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
+import AdminUpdateHighlightedProduct from './AdminUpdateHighlightedProduct';
 
 const HighlightedProductsSection = () => {
     const [allHighlightProducts , setallHighlightProducts] = useState([]);
@@ -19,6 +20,14 @@ const HighlightedProductsSection = () => {
   
     const paginatedHighlights = paginate(allHighlightProducts, highlightPage);
     const totalHighlightPages = Math.ceil(allHighlightProducts.length / ITEMS_PER_PAGE);
+
+    const [openUpdateModal , setOpenUpdateModal] = useState(false);
+    const [highlightedProductObject , setHighlightedProductObject] = useState({});
+
+    const handleOpenModal = (productObj)=>{
+      setOpenUpdateModal(true);
+      setHighlightedProductObject(productObj)
+    }
       
     useEffect(()=>{
         const fetchAllHighlightProducts = async () => {
@@ -79,7 +88,11 @@ const HighlightedProductsSection = () => {
             <button 
             onClick={()=> handleDeletingHighlightProduct(product._id)}
             className='bg-red-500 rounded-sm py-2'>Delete</button>
-            <button className='bg-purple-500 rounded-sm py-2'>Update</button>
+            <button
+              onClick={()=> handleOpenModal(product)}
+            className='bg-purple-500 rounded-sm py-2'>Update</button>
+
+            {openUpdateModal && <AdminUpdateHighlightedProduct setUpdateHighlightedProduct={setOpenUpdateModal} higlightedProductObj={product} higlightedProductCollection={highlightsCollection} />}
           </div>
         </div>
       ))}

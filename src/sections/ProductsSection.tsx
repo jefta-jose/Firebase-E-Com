@@ -2,6 +2,7 @@ import { db } from '@/lib/firebase';
 import AdminCreateProduct from '@/ui/AdminCreateProduct';
 import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
+import AdminUpdateProduct from './AdminUpdateProduct';
 
 const ProductsSection = () => {
   const [allProducts , setallProducts] = useState([]);
@@ -49,6 +50,15 @@ const ProductsSection = () => {
     }
   };
 
+  const [openModal , setOpenModal] = useState(false);
+  const [productObject , setProductObject] = useState({});
+
+  const openUpdateModal = (product)=> {
+    setOpenModal(true);
+    setProductObject(product);
+  }
+
+
 
   return (
     <div className="mb-8 p-6 bg-white rounded-lg shadow-md">
@@ -80,7 +90,11 @@ const ProductsSection = () => {
             <button 
               onClick={() => handleDeletingProduct(product._id)}
             className='bg-red-500 rounded-sm py-2'>Delete</button>
-            <button className='bg-purple-500 rounded-sm py-2'>Update</button>
+            <button
+            onClick={()=> openUpdateModal(product)}
+            className='bg-purple-500 rounded-sm py-2'>Update</button>
+
+            {openModal && <AdminUpdateProduct  setOpenModal={setOpenModal} productObj={productObject} productCollection={productsCollection} />}
           </div>
         </div>
       ))}
