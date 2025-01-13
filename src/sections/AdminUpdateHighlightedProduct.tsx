@@ -1,14 +1,17 @@
+import { useGetHighlightProductByIdQuery, useUpdateHighlightProductMutation } from "@/redux/highlightProducts";
 import Label from "@/ui/Label"
-import { doc , getDoc , updateDoc } from "firebase/firestore"
 import { useState } from "react"
 
-const AdminUpdateHighlightedProduct = ({setUpdateHighlightedProduct  , higlightedProductObj , higlightedProductCollection}) => {
+const AdminUpdateHighlightedProduct = ({setUpdateHighlightedProduct  , higlightedProductObj}) => {
     const [loading , setLoading] = useState(false);
     const [errorMessage , setErrorMessage] = useState('');
 
     const closeModal = ()=> {
         setUpdateHighlightedProduct(false)
     }
+
+    const [updateHighlightProduct] = useUpdateHighlightProductMutation();
+    const {data:singleHighlightProduct} = useGetHighlightProductByIdQuery(higlightedProductObj._id);
 
     const handleUpdatingHighlightedProduct = async (e:any)=>{
         e.preventDefault();
@@ -21,28 +24,20 @@ const AdminUpdateHighlightedProduct = ({setUpdateHighlightedProduct  , higlighte
         );
 
         try {
-            //get the document in the collection to update
-            const highlightProductDocument = doc(higlightedProductCollection , higlightedProductObj._id);
-
-            //fetch existing document data
-            const existingHighlightedProductDocument = await getDoc(highlightProductDocument);
-            //check if the document exists
-            if(!existingHighlightedProductDocument.exists()) {
-                setErrorMessage("Category Does Not Exist");
-                return;
-            }
-
-            //fetch existing document data
-            const existingDocumentData = existingHighlightedProductDocument.data();
 
             //merge existing data with filtered 
             const meregedData = {
-                ...existingDocumentData,
+                ...singleHighlightProduct,
                 ...filteredData,
             };
 
+            const payload = {
+              id: higlightedProductObj._id,
+              highlightProduct: meregedData
+            }
+
             // update the document in firebase 
-            await updateDoc(highlightProductDocument , meregedData);
+            await updateHighlightProduct(payload);
 
             //close the modal
             setUpdateHighlightedProduct(false);

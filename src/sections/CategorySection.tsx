@@ -1,14 +1,14 @@
-import { db } from "@/lib/firebase";
 import AdminCreateCategory from "@/ui/AdminCreateCategory";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import AdminUpdateCategory from "./AdminUpdateCategory";
+import { useGetCategoriesQuery , useDeleteCategoryMutation } from "@/redux/categorySlice";
 
 const CategorySection = () => {
   const [allCategories , setallCategories] = useState([]);
-  const categoriesCollection = collection(db, "categories");
-
   const [addCategoryModal , setAddCategoryModal] = useState(false);
+  const {data} = useGetCategoriesQuery();
+  const [deleteCategory] = useDeleteCategoryMutation();
+
 
   const ITEMS_PER_PAGE = 5; // Define items per page
   // States for pagination
@@ -26,13 +26,10 @@ const CategorySection = () => {
   useEffect(() => {
       const fetchAllCategories = async () => {
       try {
-          const querySnapshot = await getDocs(categoriesCollection);
-          const categoriesList = querySnapshot.docs.map((doc) => ({
-              _id: doc.id,  // Store the document ID
-              ...doc.data(),  // Spread the document data
-          }));
-          setallCategories(categoriesList);
-          }
+        if(data){
+          setallCategories(data);
+        }
+        }
       catch (error) {
           console.error("Error fetching data", error);
       }
@@ -40,13 +37,11 @@ const CategorySection = () => {
   
       fetchAllCategories();
   
-  },[]);
+  },[data]);
 
   const handleDeletingCategory = async (categoryId: string) => {
     try {
-      const highlightProductDoc = doc(categoriesCollection, categoryId); // Get a reference to the document
-      await deleteDoc(highlightProductDoc); // Delete the document
-      console.log("Document deleted successfully");
+      await deleteCategory(categoryId);
     } catch (error) {
       console.log("Error deleting document", error);
     }

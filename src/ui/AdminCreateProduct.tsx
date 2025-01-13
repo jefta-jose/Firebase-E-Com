@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../lib/firebase';
 import Label from './Label';
+import { useAddProductMutation } from '@/redux/productsSlics';
 
 const AdminCreateProduct = ({ setAddProductModal }) => {
-  const productsCollection = collection(db, 'products');
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
+
+  const [addProduct] = useAddProductMutation();
 
   const handleCreatingProduct = async (e: any) => {
     e.preventDefault();
@@ -25,8 +25,7 @@ const AdminCreateProduct = ({ setAddProductModal }) => {
 
     try {
       setLoading(true);
-      await addDoc(productsCollection, productData);
-      console.log('Document added successfully');
+      await addProduct( productData);
       handleCancel();
     } catch (error) {
       console.log('Error adding document', error);

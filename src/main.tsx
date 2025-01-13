@@ -17,13 +17,17 @@ import Product from "./pages/Product.tsx";
 import Profile from "./pages/Profile.tsx";
 import Success from "./pages/Success.tsx";
 import Layout from "./ui/Layout.tsx";
+import { store } from "./store/store.ts";
+import { Provider } from "react-redux";
 
 const RouterLayout = () => {
   return (
+    <Provider store={store}>
     <Layout>
       <ScrollRestoration />
       <Outlet />
     </Layout>
+    </Provider>
   );
 };
 

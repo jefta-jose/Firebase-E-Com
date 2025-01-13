@@ -2,33 +2,28 @@ import { useEffect, useState } from "react";
 import Container from "./Container";
 import { HighlightsType } from "../../type";
 import { Link } from "react-router-dom";
-
-import { db } from "../lib/firebase";
-import { getDocs, collection } from "firebase/firestore";
 import { getUserRole } from "../lib/localStore";
+import { useGetHighlightProductsQuery } from "@/redux/highlightProducts";
 
 const Hightlights = () => {
   const [highlightsData, setHighlightsData] = useState([]);
-  const highlightsCollection = collection(db, 'highlightsProducts');
-
   const userRole = getUserRole();
+
+  const {data , isLoading } = useGetHighlightProductsQuery();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const querySnapshot = await getDocs(highlightsCollection);
-        const highlightList = querySnapshot.docs.map((doc) => ({
-          _id: doc.id,
-          ...doc.data(),
-        }));
-        setHighlightsData(highlightList);
+        setHighlightsData(data);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
 
-    fetchData();
-  }, []);
+    if(!isLoading){
+      fetchData();
+    }
+  }, [data , isLoading]);
 
   return (
     <Container className={userRole === "admin" ? "hidden" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"}>

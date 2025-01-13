@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+
 import Label from './Label';
+import { useAddHighlightProductMutation } from '@/redux/highlightProducts';
 
 const AdminCreateHighlightedProduct = ({setAddhighlightedProductModal}) => {
-    const highlightsCollection = collection(db, "highlightsProducts");
+  const [addHighlightProduct] = useAddHighlightProductMutation();
 
     const [loading, setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('');
@@ -16,7 +16,7 @@ const AdminCreateHighlightedProduct = ({setAddhighlightedProductModal}) => {
     
         try {
           setLoading(true);
-          await addDoc(highlightsCollection, productData);
+          await addHighlightProduct(productData);;
           console.log('Document added successfully');
           handleCancel();
         } catch (error) {

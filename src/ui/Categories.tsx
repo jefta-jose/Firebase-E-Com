@@ -3,31 +3,27 @@ import Container from "./Container";
 import Title from "./Title";
 import { Link } from "react-router-dom";
 import { CategoryProps } from "../../type";
-import { db } from "../lib/firebase";
-import { getDocs, collection} from "firebase/firestore";
 import { getUserRole } from "../lib/localStore";
+import { useGetCategoriesQuery } from "@/redux/categorySlice";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
-
-  const categoryCollection = collection(db , "categories")
+  const {data , isLoading} = useGetCategoriesQuery();
 
   useEffect(() => {
     const fetchData = async () => {
       try {            
-        // Fetch all products if no specific id is provided
-        const querySnapshot = await getDocs(categoryCollection);
-        const categoryList = querySnapshot.docs.map((doc) => ({
-          _id: doc.id,  // Store the document ID
-          ...doc.data(),  // Spread the document data
-        }));
-        setCategories(categoryList);
+
+        setCategories(data);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
-    fetchData();
-  }, []);
+
+    if(!isLoading){
+      fetchData();
+    }
+  }, [data , isLoading]);
 
   const userRole = getUserRole();
   

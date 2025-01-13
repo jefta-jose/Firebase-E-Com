@@ -1,8 +1,9 @@
+import { useUpdateHighlightProductMutation } from "@/redux/highlightProducts";
+import { useGetProductByIdQuery, useUpdateProductMutation } from "@/redux/productsSlics";
 import Label from "@/ui/Label"
-import { doc , getDoc , updateDoc } from "firebase/firestore"
 import { useState } from "react"
 
-const AdminUpdateProduct = ({setOpenModal , productObj, productCollection}) => {
+const AdminUpdateProduct = ({setOpenModal , productObj}) => {
     console.log(productObj , "productObj");
     console.log("reached here");
     
@@ -12,6 +13,9 @@ const AdminUpdateProduct = ({setOpenModal , productObj, productCollection}) => {
     const closeModal = ()=> {
         setOpenModal(false)
     }
+
+    const [updateProduct] = useUpdateProductMutation();
+    const {data: singleProduct} = useGetProductByIdQuery(productObj._id)
 
     const handleUpdatingProduct = async (e:any)=>{
         e.preventDefault();
@@ -24,28 +28,20 @@ const AdminUpdateProduct = ({setOpenModal , productObj, productCollection}) => {
         );
 
         try {
-            //get the document in the collection to update
-            const ProductDocument = doc(productCollection , productObj._id);
-
-            //fetch existing document data
-            const existingProductDocument = await getDoc(ProductDocument);
-            //check if the document exists
-            if(!existingProductDocument.exists()) {
-                setErrorMessage("Product Does Not Exist");
-                return;
-            }
-
-            //fetch existing document data
-            const existingDocumentData = existingProductDocument.data();
 
             //merge existing data with filtered 
             const meregedData = {
-                ...existingDocumentData,
+                ...singleProduct,
                 ...filteredData,
             };
 
+            const payload = {
+              id: productObj._id,
+              product: meregedData,
+            }
+
             // update the document in firebase 
-            await updateDoc(ProductDocument , meregedData);
+            await updateProduct(payload);
 
             //close the modal
             setOpenModal(false);

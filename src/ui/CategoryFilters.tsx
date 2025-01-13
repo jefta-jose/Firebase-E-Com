@@ -2,27 +2,20 @@ import { useEffect, useState } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import { CategoryProps } from "../../type";
 import { Link } from "react-router-dom";
-import { db } from "../lib/firebase";
-import { getDocs, collection } from "firebase/firestore";
+import { useGetCategoriesQuery } from "@/redux/categorySlice";
+
 
 
 const CategoryFilters = ({ id }: { id: string | undefined }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const {data , isLoading} = useGetCategoriesQuery();
 
-  const categoryCollection = collection(db, "categories");
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Fetch all products if no specific id is provided
-        const querySnapshot = await getDocs(categoryCollection);
-        const categoryList = querySnapshot.docs.map((doc) => ({
-          _id: doc.id,  // Store the document ID
-          ...doc.data(),  // Spread the document data
-        }));
-        setCategories(categoryList);
+        setCategories(data);
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
@@ -30,8 +23,10 @@ const CategoryFilters = ({ id }: { id: string | undefined }) => {
       }
     };
 
-    fetchData();
-  }, []);
+    if(!isLoading){
+      fetchData();
+    }
+  }, [data , isLoading]);
 
   return (
     <div className="hidden md:inline-flex flex-col gap-6">

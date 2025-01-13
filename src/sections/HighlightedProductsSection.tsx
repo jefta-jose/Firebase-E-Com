@@ -1,12 +1,10 @@
-import { db } from '@/lib/firebase';
 import AdminCreateHighlightedProduct from '@/ui/AdminCreateHighlightedProduct';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import AdminUpdateHighlightedProduct from './AdminUpdateHighlightedProduct';
+import { useDeleteHighlightProductMutation, useGetHighlightProductsQuery } from '@/redux/highlightProducts';
 
 const HighlightedProductsSection = () => {
     const [allHighlightProducts , setallHighlightProducts] = useState([]);
-    const highlightsCollection = collection(db, "highlightsProducts");
 
     const [addhighlightedProductModal , setAddhighlightedProductModal] = useState(false);
     const ITEMS_PER_PAGE = 5; // Define items per page
@@ -20,37 +18,29 @@ const HighlightedProductsSection = () => {
   
     const paginatedHighlights = paginate(allHighlightProducts, highlightPage);
     const totalHighlightPages = Math.ceil(allHighlightProducts.length / ITEMS_PER_PAGE);
-
     const [openUpdateModal , setOpenUpdateModal] = useState(false);
-    const [highlightedProductObject , setHighlightedProductObject] = useState({});
 
-    const handleOpenModal = (productObj)=>{
-      setOpenUpdateModal(true);
-      setHighlightedProductObject(productObj)
-    }
+    const {data , isLoading} = useGetHighlightProductsQuery();
+    const [deleteHighlightProduct] = useDeleteHighlightProductMutation();
       
     useEffect(()=>{
         const fetchAllHighlightProducts = async () => {
             try {
-                const querySnapshot = await getDocs(highlightsCollection);
-                const highlightProductsList = querySnapshot.docs.map((doc) => ({
-                _id: doc.id,  // Store the document ID
-                ...doc.data(),  // Spread the document data
-                }));
-                setallHighlightProducts(highlightProductsList);
+                setallHighlightProducts(data);
             }
             catch (error) {
             console.error("Error fetching data", error);
             }
         };
 
-        fetchAllHighlightProducts();
-    }, [])
+        if(!isLoading){
+          fetchAllHighlightProducts();
+        }
+    }, [data, isLoading])
 
     const handleDeletingHighlightProduct = async (HighlightProductId: string) => {
       try {
-        const highlightProductDoc = doc(highlightsCollection, HighlightProductId); // Get a reference to the document
-        await deleteDoc(highlightProductDoc); // Delete the document
+        await deleteHighlightProduct(HighlightProductId); // Delete the document
         console.log("Document deleted successfully");
       } catch (error) {
         console.log("Error deleting document", error);
@@ -89,10 +79,10 @@ const HighlightedProductsSection = () => {
             onClick={()=> handleDeletingHighlightProduct(product._id)}
             className='bg-red-500 rounded-sm py-2'>Delete</button>
             <button
-              onClick={()=> handleOpenModal(product)}
+              onClick={()=> setOpenUpdateModal(true)}
             className='bg-purple-500 rounded-sm py-2'>Update</button>
 
-            {openUpdateModal && <AdminUpdateHighlightedProduct setUpdateHighlightedProduct={setOpenUpdateModal} higlightedProductObj={product} higlightedProductCollection={highlightsCollection} />}
+            {openUpdateModal && <AdminUpdateHighlightedProduct setUpdateHighlightedProduct={setOpenUpdateModal} higlightedProductObj={product} />}
           </div>
         </div>
       ))}

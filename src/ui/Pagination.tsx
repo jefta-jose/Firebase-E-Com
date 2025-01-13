@@ -4,8 +4,7 @@ import { config } from "../../config";
 import { ProductProps } from "../../type";
 import ProductCard from "./ProductCard";
 import ReactPaginate from "react-paginate";
-import { db } from "../lib/firebase";
-import { getDocs, collection } from "firebase/firestore";
+import { useGetProductsQuery } from "@/redux/productsSlics";
 
 interface ItemsProps {
   currentItems: ProductProps[];
@@ -24,26 +23,23 @@ const Items = ({ currentItems }: ItemsProps) => {
 
 const Pagination = () => {
   const [products, setProducts] = useState([]);
-      const productsCollection = collection(db, "products");
+  const {data , isLoading} = useGetProductsQuery();
   
 
   useEffect(() => {
     const fetchData = async () => {
       const endpoint = `${config?.baseUrl}/products`;
       try {
-            // Fetch all products if no specific id is provided
-            const querySnapshot = await getDocs(productsCollection);
-            const productsList = querySnapshot.docs.map((doc) => ({
-              _id: doc.id,  // Store the document ID
-              ...doc.data(),  // Spread the document data
-            }));
-            setProducts(productsList);
+            setProducts(data);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
-    fetchData();
-  }, []);
+    if(!isLoading){
+      fetchData();
+    }
+  }, [isLoading , data]);
+  
   const itemsPerPage = 15;
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);

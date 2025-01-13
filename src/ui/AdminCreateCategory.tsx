@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+
 import Label from './Label';
+import { useAddCategoryMutation } from '@/redux/categorySlice';
 
 const AdminCreateCategory = ({setAddCategoryModal}) => {
-    const categoriesCollection = collection(db, "categories");
+  const [addCategory] = useAddCategoryMutation();
 
     const [loading, setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('');
@@ -16,11 +16,9 @@ const AdminCreateCategory = ({setAddCategoryModal}) => {
     
         try {
           setLoading(true);
-          await addDoc(categoriesCollection, categoryData);
-          console.log('Document added successfully');
+          await addCategory(categoryData)
           handleCancel();
         } catch (error) {
-          console.log('Error adding document', error);
           setErrMsg('Error creating product. Please try again.');
         } finally {
           setLoading(false);

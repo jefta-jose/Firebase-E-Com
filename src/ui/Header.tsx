@@ -15,10 +15,9 @@ import Container from "./Container";
 import { CategoryProps, ProductProps } from "../../type";
 import ProductCard from "./ProductCard";
 import { store } from "../lib/store";
-
-import { db } from "../lib/firebase";
-import { getDocs, collection } from "firebase/firestore";
 import { getUserRole } from "../lib/localStore";
+import { useGetCategoriesQuery } from "@/redux/categorySlice";
+import { useGetProductsQuery } from "@/redux/productsSlics";
 
 const bottomNavigation = [
   { title: "Home", link: "/" },
@@ -37,43 +36,36 @@ const Header = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const { cartProduct, favoriteProduct, currentUser } = store();
 
-  const productsCollection = collection(db, "products");
-  const categoryCollection = collection(db, "categories");
+  const{data:allproducts , isLoading: isFetchingProducts} = useGetProductsQuery();
+  const{data:allcategories , isLoading: isFetchingCategories} = useGetCategoriesQuery();
+
   
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-            // Fetch all products if no specific id is provided
-            const querySnapshot = await getDocs(productsCollection);
-            const productsList = querySnapshot.docs.map((doc) => ({
-              _id: doc.id,  // Store the document ID
-              ...doc.data(),  // Spread the document data
-            }));
-            setProducts(productsList);
+            setProducts(allproducts);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
-    fetchData();
-  }, []);
+    if(!isFetchingProducts){
+      fetchData();
+    }
+  }, [isFetchingProducts, allproducts]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all products if no specific id is provided
-        const querySnapshot = await getDocs(categoryCollection);
-        const categoryList = querySnapshot.docs.map((doc) => ({
-          _id: doc.id,  // Store the document ID
-          ...doc.data(),  // Spread the document data
-        }));
-        setCategories(categoryList);
+        setCategories(allcategories);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
-    fetchData();
-  }, []);
+    if(!isFetchingCategories){
+      fetchData();
+    }
+  }, [allcategories, isFetchingCategories]);
 
   useEffect(() => {
     const filtered = products.filter((item: ProductProps) =>

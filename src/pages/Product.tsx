@@ -13,14 +13,14 @@ import { productPayment } from "../assets";
 import ProductCard from "../ui/ProductCard";
 import CategoryFilters from "../ui/CategoryFilters";
 import _ from "lodash";
-import { db } from "../lib/firebase";
-import { getDocs, collection, doc, getDoc } from "firebase/firestore";
 import { getUserRole } from "../lib/localStore";
 import AdminCreateProduct from "../ui/AdminCreateProduct";
+import { useGetProductByIdQuery, useGetProductsQuery } from "@/redux/productsSlics";
 
 const Product = () => {
   const [productData, setProductData] = useState<ProductProps | null>(null);
   const [allProducts, setAllProducts] = useState<ProductProps[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [color, setColor] = useState("");
@@ -28,10 +28,8 @@ const Product = () => {
 
   const [addProductModal , setAddProductModal] = useState(false);
 
-
-
-    // Firestore collection reference
-    const productsCollection = collection(db, "products");
+  const {data: Products} = useGetProductsQuery();
+  const {data: singleProduct} = useGetProductByIdQuery(id);
 
     useEffect(() => {
       const fetchData = async () => {
@@ -39,28 +37,10 @@ const Product = () => {
           setLoading(true);
   
           if (id) {
-            // Fetch specific product by id
-            const productDocRef = doc(db, "products", id);  // Reference to the specific product document
-            const productDocSnap = await getDoc(productDocRef);
-  
-            if (productDocSnap.exists()) {
-              setProductData({
-                _id: productDocSnap.id,  // Store the document ID
-                ...productDocSnap.data(),  // Spread the document data
-              });
-              setAllProducts([]);
-            } else {
-              console.log("Product not found!");
-              setProductData(null);
-            }
+            setProductData(singleProduct);
+            setAllProducts([]);
           } else {
-            // Fetch all products if no specific id is provided
-            const querySnapshot = await getDocs(productsCollection);
-            const productsList = querySnapshot.docs.map((doc) => ({
-              _id: doc.id,  // Store the document ID
-              ...doc.data(),  // Spread the document data
-            }));
-            setAllProducts(productsList);
+            setAllProducts(Products);
             setProductData(null);
           }
         } catch (error) {
@@ -71,7 +51,7 @@ const Product = () => {
       };
   
       fetchData();
-    }, [id]); // Only depend on `id`, `endpoint` is unnecessary here
+    }, [id , singleProduct, Products]); // Only depend on `id`, `endpoint` is unnecessary here
 
   useEffect(() => {
     if (productData) {
