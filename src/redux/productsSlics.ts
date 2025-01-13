@@ -8,6 +8,8 @@ import {
     deleteDoc,
     updateDoc,
     getDoc,
+    query, 
+    where
 } from 'firebase/firestore';
 
 type Product = {
@@ -69,6 +71,38 @@ export const productsApiSlice = createApi({
                 : [{ type: "products", id: "LIST" }],
         }),
 
+        getProductsByBase: builder.query<Product[], string>({
+            async queryFn(baseId) {
+              try {
+                // Query products collection to filter by `_base`
+                const productsRef = collection(db, "products");
+                const productsQuery = query(productsRef, where("_base", "==", baseId));
+                const querySnapshot = await getDocs(productsQuery);
+          
+                if (!querySnapshot.empty) {
+                  const products = querySnapshot.docs.map((doc) => ({
+                    _id: doc.id,
+                    ...doc.data(),
+                  })) as Product[];
+                  return { data: products };
+                } else {
+                  return { error: { message: "No products found for the specified base." } };
+                }
+              } catch (error) {
+                return { error: { message: (error as Error).message } };
+              }
+            },
+            providesTags: (result, error, baseId) =>
+              result
+                ? [
+                    { type: "products", id: baseId },
+                    ...result.map(({ _id }) => ({ type: "products", id: _id })),
+                    { type: "products", id: "LIST" },
+                  ]
+                : [{ type: "products", id: "LIST" }],
+          }),
+          
+
         // Add Product
         addProduct: builder.mutation<Product, Partial<Product>>({
             async queryFn(newProduct) {
@@ -125,5 +159,6 @@ export const {
     useDeleteProductMutation,
     useGetProductsQuery,
     useUpdateProductMutation,
-    useGetProductByIdQuery
+    useGetProductByIdQuery,
+    useGetProductsByBaseQuery
 } = productsApiSlice;

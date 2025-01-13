@@ -3,11 +3,11 @@ import Container from "../ui/Container";
 import CategoryFilters from "../ui/CategoryFilters";
 import ProductCard from "../ui/ProductCard";
 import { ProductProps } from "../../type";
-import { useGetProductsQuery } from "@/redux/productsSlics";
+import { useGetProductsByBaseQuery } from "@/redux/productsSlics";
 
 const Category = () => {
   const { id } = useParams(); // `id` corresponds to `_base` in Firebase
-  const {data:products = [] , isLoading , isError , error} = useGetProductsQuery();
+  const {data:products = [] , isLoading , isError , error} = useGetProductsByBaseQuery(id);
 
   const formatId = (id: string) => {
     return id

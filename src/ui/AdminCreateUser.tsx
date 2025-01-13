@@ -112,13 +112,17 @@ const AdminCreateUser = ({setAddUserModal }) => {
                     />
                 </div>
                 <div className="sm:col-span-2">
-                    <Label title="Role" htmlFor="role" />
-                    <input
-                    type="text"
-                    name="role"
-                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
-                    />
-                </div>
+                  <Label title="Role" htmlFor="role" />
+                  <select
+                      name="role"
+                      id="role"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
+                  >
+                      <option className=" text-black font-semibold" value="admin">Admin</option>
+                      <option className=" text-black font-semibold" value="customer">Customer</option>
+                  </select>
+              </div>
+
                 </div>
             </div>
             {errMsg && (
