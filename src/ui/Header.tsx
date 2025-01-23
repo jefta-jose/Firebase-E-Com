@@ -173,7 +173,7 @@ const Header = () => {
             >
               <MenuItems
                 anchor="bottom end"
-                className="w-52 origin-top-right rounded-xl border border-white/5 bg-black p-1 text-sm/6 text-gray-300 [--anchor-gap:var(--spacing-1)] focus:outline-none hover:text-white z-50"
+                className="w-52 mt-4 ml-2 lg:ml-6 origin-top-right rounded-xl border border-white/5 bg-gray-300  p-1 text-sm/6 text-gray-300 [--anchor-gap:var(--spacing-1)] focus:outline-none hover:text-white z-50"
               >
                 {categories.map((item: CategoryProps) => (
                   <MenuItem key={item?._id}>
@@ -184,9 +184,11 @@ const Header = () => {
                       <img
                         src={item?.image}
                         alt="categoryImage"
-                        className="w-6 h-6 rounded-md"
+                        className="w-6 h-6 rounded-md "
                       />
-                      {item?.name}
+                      <div className=" text-black font-semibold">
+                        {item?.name}
+                      </div>
                     </Link>
                   </MenuItem>
                 ))}

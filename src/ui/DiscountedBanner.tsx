@@ -1,4 +1,3 @@
-import React from "react";
 import Container from "./Container";
 import Title from "./Title";
 import { Link } from "react-router-dom";
@@ -16,12 +15,12 @@ import { getUserRole } from "../lib/localStore";
 
 const DiscountedBanner = () => {
   const popularSearchItems = [
-    { title: "Smart Watches", link: "smartWatches" },
-    { title: "Headphone", link: "headphones" },
-    { title: "Cameras", link: "camerasAndPhotos" },
-    { title: "Audio", link: "tvAndAudio" },
-    { title: "Laptop & Computers", link: "computersAndLaptop" },
-    { title: "Cell Phone", link: "cellPhones" },
+    { title: "Bedroom", link: "bedroom" },
+    { title: "Storage & Organization", link: "storageAndOrganization" },
+    { title: "Bathroom", link: "bathroom" },
+    { title: "Dining Room", link: "diningRoom" },
+    { title: "Living Room", link: "livingRoom" },
+    { title: "Lighting", link: "lighting" },
   ];
 
   const userRole = getUserRole();
@@ -51,7 +50,7 @@ const DiscountedBanner = () => {
         />
         <div className="flex flex-col flex-1 gap-1 items-center">
           <div className="flex items-center justify-center gap-x-3 text-xl md:text-4xl font-bold">
-            <h2>Sony Headphone</h2>
+            <h2>Hand Crafted Light</h2>
             <Link
               to={"/product"}
               className="border border-red-600 px-4 py-2 text-xl md:text-3xl text-red-600 rounded-full"
