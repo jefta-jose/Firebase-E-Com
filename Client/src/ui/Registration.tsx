@@ -5,9 +5,11 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import Login from "./Login";
+import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
 
+  const navigate = useNavigate();
   const [login, setLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
@@ -53,6 +55,7 @@ const Registration = () => {
       setErrMsg(errorMessage);
     } finally {
       setLoading(false);
+      navigate('/verifyEmail')
     }
   };
 
@@ -134,7 +137,7 @@ const Registration = () => {
                 loading ? "bg-gray-500 hover:bg-gray-500" : "bg-indigo-700"
               }`}
             >
-              {loading ? "Loading..." : "Send"}
+              {loading ? "Loading..." : "Send Verification Code"}
             </button>
           </form>
           <p className="text-sm leading-6 text-gray-400 text-center -mt-2 py-10">
