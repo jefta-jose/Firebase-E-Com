@@ -103,7 +103,7 @@ const Product = () => {
                     discountedPrice={productData?.discountedPrice}
                     className="text-xl flex-col lg:flex-row"
                   />
-                  <div className="flex items-center gap-1">
+                  <div className="flex flex-col items-center gap-1">
                     <div className="text-base text-lightText flex items-center">
                       <MdOutlineStarOutline />
                       <MdOutlineStarOutline />
@@ -114,7 +114,7 @@ const Product = () => {
                     <p className="text-base font-semibold">{`(${productData?.reviews} reviews)`}</p>
                   </div>
                 </div>
-                <p className="flex items-center">
+                <p className="flex items-center text-sm md:text-lg">
                   <FaRegEye className="mr-1" />{" "}
                   <span className="font-semibold mr-1">
                     {productData?.reviews}
