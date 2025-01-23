@@ -36,7 +36,7 @@ const ProductCard = ({ item, setSearchText }: Props) => {
     setSearchText && setSearchText("");
   };
   return (
-    <div className="border border-gray-200 rounded-lg p-1 overflow-hidden hover:border-black duration-200 cursor-pointer w-[18rem] h-[26.5rem]">
+    <div className="border border-gray-200 rounded-lg p-1 overflow-hidden hover:border-black duration-200 cursor-pointer">
       <div className="w-full h-60 relative p-2 group">
         <span
           onClick={open}
