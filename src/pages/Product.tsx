@@ -69,10 +69,9 @@ const Product = () => {
       ) : (
         <Container>
           {!!id && productData && _.isEmpty(allProducts) ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 ">
-
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             <div className="flex-col gap-4 mx-auto">
-              <div className="flex items-center justify-center max-w-lg border border-gray-200 rounded-md overflow-hidden w-[20rem] h-[20rem] sm:w-[24rem] sm:h-[24rem] md:w-[27rem] md:h-[27rem] lg:w-[30rem] lg:h-[30rem]">
+              <div className="flex items-center justify-center max-w-lg border border-gray-200 rounded-md overflow-hidden w-[18rem] h-[18rem] sm:w-[24rem] sm:h-[24rem] md:w-[27rem] md:h-[27rem] lg:w-[30rem] lg:h-[30rem]">
                 <img
                   src={imgUrl}
                   alt="mainImage"
@@ -102,7 +101,7 @@ const Product = () => {
                   <PriceTag
                     regularPrice={productData?.regularPrice}
                     discountedPrice={productData?.discountedPrice}
-                    className="text-xl"
+                    className="text-xl flex-col lg:flex-row"
                   />
                   <div className="flex items-center gap-1">
                     <div className="text-base text-lightText flex items-center">
