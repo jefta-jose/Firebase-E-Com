@@ -17,7 +17,6 @@ const UserInfo = ({ currentUser }: UserTypes) => {
   const [isUserEmailVerified, setIsUserEmailVerified] = useState(singleUser?.isVerified);
   const [isUserEmailVerifying, setIsUserEmailVerifying] = useState(singleUser?.isVerifying);
   
-  useEffect(() => {
     const getUser = ()=>{
         // Update the state if the user data changes
         if (singleUser) {
@@ -26,11 +25,12 @@ const UserInfo = ({ currentUser }: UserTypes) => {
         }
     }
 
-    if(!isFetchingUser){
-      getUser();
-    }
-
-  }, [singleUser]); // Depend on singleUser to recheck when it changes
+    useEffect(() => {
+      if(!isFetchingUser){
+        getUser();
+      }
+    }, [isFetchingUser])
+    
   
 
   const sendVerificationEmail = async () => {
@@ -44,6 +44,9 @@ const UserInfo = ({ currentUser }: UserTypes) => {
         );
   
         alert(response.data);
+
+        getUser();
+
       }
 
     } catch (error: any) {

@@ -136,7 +136,7 @@ const Registration = () => {
                 loading ? "bg-gray-500 hover:bg-gray-500" : "bg-indigo-700"
               }`}
             >
-              {loading ? "Loading..." : "Send Verification Code"}
+              {loading ? "Loading..." : "Register"}
             </button>
           </form>
           <p className="text-sm leading-6 text-gray-400 text-center -mt-2 py-10">
