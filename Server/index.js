@@ -4,6 +4,9 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import crypto from 'crypto'
 import dotenv from 'dotenv'
+import { db } from "./firebase.js";
+import { collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+
 
 const app = express();
 const PORT = 5000;
@@ -51,10 +54,12 @@ app.post("/send-verification-email", (req, res) => {
         }
         res.send("Verification email sent!");
     });
+
+    updateVerificationStatus(email)
 });
 
 // API to verify email
-app.get("/verify-email", (req, res) => {
+app.get("/verify-email", async (req, res) => {
     const { token } = req.query;
 
     if (!token || !verificationTokens[token]) {
@@ -64,8 +69,51 @@ app.get("/verify-email", (req, res) => {
     const email = verificationTokens[token];
     delete verificationTokens[token];
 
-    res.send(`Email ${email} verified successfully!`);
+    try {
+        // Use collection and query to get user by email
+        const usersRef = collection(db, "users"); // Reference the "users" collection
+        const q = query(usersRef, where("email", "==", email));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+            const docId = snapshot.docs[0].id; // Get the first document ID
+            const userDocRef = doc(db, "users", docId); // Reference the document
+
+            // Update the isVerified field
+            await updateDoc(userDocRef, { isVerified: true });
+
+            res.send(`Email ${email} verified successfully!`);
+        } else {
+            res.status(404).send("User not found.");
+        }
+    } catch (error) {
+        console.error("Error updating isVerified:", error);
+        res.status(500).send("Internal server error.");
+    }
 });
+
+const updateVerificationStatus = async(email , req,res)=>{
+    try {
+        // Use collection and query to get user by email
+        const usersRef = collection(db, "users"); // Reference the "users" collection
+        const q = query(usersRef, where("email", "==", email));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+            const docId = snapshot.docs[0].id; // Get the first document ID
+            const userDocRef = doc(db, "users", docId); // Reference the document
+
+            // Update the isVerified field
+            await updateDoc(userDocRef, { isVerifying: true });
+
+        } else {
+            res.status(404).send("User not found.");
+        }
+    } catch (error) {
+        console.error("Error updating isVerifying:", error);
+    }
+}
+
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

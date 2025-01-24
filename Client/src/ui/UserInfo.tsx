@@ -4,41 +4,43 @@ import Container from "./Container";
 import { useEffect, useState } from "react";
 import UpdateUserDetails from "./updateUserDetails";
 import axios from "axios";
-import { getUserEmail, getUserVerification } from "@/lib/localStore";
-
+import { getUserEmail, getUserVerification, getUserVerifying } from "@/lib/localStore";
 
 
 const UserInfo = ({ currentUser }: UserTypes) => {
+  const [updateDetails, setUpdateDetails] = useState(false);
 
-  const [updateDetails , setupdateDetails] = useState(false)
-  const [verificationState, setVerificationState] = useState("idle"); // idle, verifying, verified
-  const [userIsVerified, setUserIsVerified] = useState(false);
+  const [isUserEmailVerified, setIsUserEmailVerified] = useState(false);
+  const [isUserEmailVerifying, setIsUserEmailVerifying] = useState(false);
+
+  const isVerified = getUserVerification();
+  const isVerifying = getUserVerifying();
 
   useEffect(() => {
-    const fetchVerificationStatus = async () => {
-      const isVerified = await getUserVerification();
-      setUserIsVerified(isVerified);
+    const checkVerificationStatus = () => {
+
+      setIsUserEmailVerified(isVerified);
+      setIsUserEmailVerifying(isVerifying);
     };
-    fetchVerificationStatus();
-  }, [userIsVerified]);
+
+    checkVerificationStatus();
+  }, [isVerified, isVerifying]);
 
   const sendVerificationEmail = async () => {
     const userEmail = getUserEmail();
 
     try {
-      setVerificationState("verifying");
-      const response = await axios.post(
-        "http://localhost:5000/send-verification-email",
-        { email: userEmail }
-      );
-
-      // Simulate a delay for verification success
-      setTimeout(() => {
-        setVerificationState("verified");
+      if(!isVerified){
+        const response = await axios.post(
+          "http://localhost:5000/send-verification-email",
+          { email: userEmail }
+        );
+  
         alert(response.data);
-      }, 2000); // Simulate delay for UX effect
+      }
+
     } catch (error: any) {
-      setVerificationState("idle");
+      console.error("Error sending verification email:", error);
       alert(error.response?.data || "Error sending email.");
     }
   };
@@ -63,52 +65,52 @@ const UserInfo = ({ currentUser }: UserTypes) => {
                 {currentUser?.firstName} {currentUser?.lastName}
               </span>
               <br />
-              <span className=" tracking-wider text-lg  underline-offset-2 decoration-[1px] font-medium pl-2">
+              <span className="tracking-wider text-lg underline-offset-2 decoration-[1px] font-medium pl-2">
                 {currentUser?.email}
               </span>
               <br />
-              
-              <span className=" tracking-wider text-lg  underline-offset-2 decoration-[1px] font-medium pl-2">
-                0712345678 
+              <span className="tracking-wider text-lg underline-offset-2 decoration-[1px] font-medium pl-2">
+                0712345678
               </span>
             </h2>
           </div>
         </div>
-        <div className="mt-10 flex flex-col md:flex-row  items-center gap-x-5 px-4 gap-y-4">
+
+        <div className="mt-10 flex flex-col md:flex-row items-center gap-x-5 px-4 gap-y-4">
           <button
             onClick={() => auth.signOut()}
-            className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold  text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           >
             Logout
           </button>
 
           <button
-            onClick={()=>setupdateDetails(true)}
-            className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold  text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            onClick={() => setUpdateDetails(true)}
+            className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           >
             Update Profile
           </button>
 
           <button
             onClick={sendVerificationEmail}
-            disabled={verificationState === "verifying" || verificationState === "verified"}
             className={`rounded-md px-8 py-2.5 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
               ${
-                verificationState === "idle"
-                  ? "bg-white text-gray-900 hover:bg-gray-100 focus-visible:outline-red-600"
-                  : verificationState === "verifying"
+                isUserEmailVerified
+                  ? "bg-green-500 text-white cursor-not-allowed"
+                  : isUserEmailVerifying
                   ? "bg-yellow-500 text-white cursor-not-allowed"
-                  : "bg-green-500 text-white cursor-not-allowed"
+                  : "bg-red-500 text-white hover:bg-red-600 focus-visible:outline-red-600"
               }`}
           >
-            {verificationState === "idle" && "Click here to verify your email"}
-            {verificationState === "verifying" && "Verifying..."}
-            {verificationState === "verified" && "Account Verified"}
+            {isUserEmailVerified
+              ? "Account Is Verified"
+              : isUserEmailVerifying
+              ? "Verifying... Check Your Email"
+              : "Click here to verify your email"}
           </button>
-
         </div>
-            
-            {updateDetails && <UpdateUserDetails currentUser={currentUser}/>}
+
+        {updateDetails && <UpdateUserDetails currentUser={currentUser} />}
 
         <svg
           viewBox="0 0 1024 1024"

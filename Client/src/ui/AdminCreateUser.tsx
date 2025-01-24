@@ -10,6 +10,8 @@ const AdminCreateUser = ({setAddUserModal }) => {
     const [errMsg, setErrMsg] = useState("");
 
   const isVerified = false;
+  const isVerifying = false;
+
 
       const handleRegistration = async (e: any) => {
         e.preventDefault();
@@ -28,6 +30,7 @@ const AdminCreateUser = ({setAddUserModal }) => {
             id: res.user.uid,
             role,
             isVerified,
+            isVerifying
           });
     
         } catch (error: any) {
