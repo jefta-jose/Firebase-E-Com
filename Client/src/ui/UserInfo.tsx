@@ -1,11 +1,13 @@
 import { UserTypes } from "../../type";
-import { auth } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import Container from "./Container";
 import { useEffect, useState } from "react";
 import UpdateUserDetails from "./updateUserDetails";
 import axios from "axios";
 import { getUserEmail } from "@/lib/localStore";
 import { useGetUserByIdQuery } from "@/redux/userSlice";
+import { doc, onSnapshot } from "firebase/firestore";
+import { log } from "console";
 
 
 const UserInfo = ({ currentUser }: UserTypes) => {
@@ -17,21 +19,23 @@ const UserInfo = ({ currentUser }: UserTypes) => {
   const [isUserEmailVerified, setIsUserEmailVerified] = useState(singleUser?.isVerified);
   const [isUserEmailVerifying, setIsUserEmailVerifying] = useState(singleUser?.isVerifying);
   
-    const getUser = ()=>{
-        // Update the state if the user data changes
-        if (singleUser) {
-          setIsUserEmailVerified(singleUser.isVerified);
-          setIsUserEmailVerifying(singleUser.isVerifying);
-        }
-    }
-
     useEffect(() => {
-      if(!isFetchingUser){
-        getUser();
-      }
-    }, [isFetchingUser])
-    
-  
+      console.log(`UserId: ${currentUser.id}`)
+      console.log(`User is verified : ${singleUser?.isVerified || "null"}`)
+      // Listen for changes in the user's verification status
+      const userRef = doc(db, "users", currentUser.id);
+
+      const unsubscribe = onSnapshot(userRef, (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const userData = docSnapshot.data();
+          setIsUserEmailVerified(userData.isVerified);
+          setIsUserEmailVerifying(userData.isVerifying);
+        }
+      });
+
+      // Cleanup the listener when the component unmounts
+      return () => unsubscribe();
+    }, [currentUser.id]);
 
   const sendVerificationEmail = async () => {
     const userEmail = getUserEmail();
@@ -43,9 +47,7 @@ const UserInfo = ({ currentUser }: UserTypes) => {
           { email: userEmail }
         );
   
-        alert(response.data);
-
-        getUser();
+        // alert(response.data);
 
       }
 
