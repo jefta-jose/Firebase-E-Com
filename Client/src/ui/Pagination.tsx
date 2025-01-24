@@ -40,7 +40,7 @@ const Pagination = () => {
     }
   }, [isLoading , data]);
   
-  const itemsPerPage = 15;
+  const itemsPerPage = 10;
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);
   const endOffset = itemOffset + itemsPerPage;
