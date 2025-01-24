@@ -75,8 +75,7 @@ const Pagination = () => {
           activeClassName="bg-black text-white"
         />
         <p>
-          Products from {itemStart} to {Math.min(endOffset, products?.length)}{" "}
-          of {products?.length}
+          Products from {itemStart} to {Math.min(endOffset, products?.length)}
         </p>
       </div>
     </>
