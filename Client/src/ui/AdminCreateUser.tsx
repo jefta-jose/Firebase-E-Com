@@ -9,6 +9,8 @@ const AdminCreateUser = ({setAddUserModal }) => {
     const [loading, setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
+  const isVerified = false;
+
       const handleRegistration = async (e: any) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -25,6 +27,7 @@ const AdminCreateUser = ({setAddUserModal }) => {
             avatar: "imageUrl",
             id: res.user.uid,
             role,
+            isVerified,
           });
     
         } catch (error: any) {
@@ -111,6 +114,7 @@ const AdminCreateUser = ({setAddUserModal }) => {
                     className="block w-full rounded-md border-0 bg-white/5 py-1.5 px-4 outline-none text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-skyText sm:text-sm sm:leading-6 mt-2"
                     />
                 </div>
+
                 <div className="sm:col-span-2">
                   <Label title="Role" htmlFor="role" />
                   <select
@@ -122,6 +126,7 @@ const AdminCreateUser = ({setAddUserModal }) => {
                       <option className=" text-black font-semibold" value="customer">Customer</option>
                   </select>
               </div>
+
 
                 </div>
             </div>

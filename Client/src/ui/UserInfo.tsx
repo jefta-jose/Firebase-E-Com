@@ -1,30 +1,47 @@
 import { UserTypes } from "../../type";
 import { auth } from "../lib/firebase";
 import Container from "./Container";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UpdateUserDetails from "./updateUserDetails";
 import axios from "axios";
-import { getUserEmail } from "@/lib/localStore";
+import { getUserEmail, getUserVerification } from "@/lib/localStore";
 
 
 
 const UserInfo = ({ currentUser }: UserTypes) => {
 
   const [updateDetails , setupdateDetails] = useState(false)
+  const [verificationState, setVerificationState] = useState("idle"); // idle, verifying, verified
+  const [userIsVerified, setUserIsVerified] = useState(false);
+
+  useEffect(() => {
+    const fetchVerificationStatus = async () => {
+      const isVerified = await getUserVerification();
+      setUserIsVerified(isVerified);
+    };
+    fetchVerificationStatus();
+  }, [userIsVerified]);
 
   const sendVerificationEmail = async () => {
     const userEmail = getUserEmail();
-    const email = userEmail; // Replace with the logged-in user's email
 
     try {
-        const response = await axios.post("http://localhost:5000/send-verification-email", {
-            email,
-        });
+      setVerificationState("verifying");
+      const response = await axios.post(
+        "http://localhost:5000/send-verification-email",
+        { email: userEmail }
+      );
+
+      // Simulate a delay for verification success
+      setTimeout(() => {
+        setVerificationState("verified");
         alert(response.data);
+      }, 2000); // Simulate delay for UX effect
     } catch (error: any) {
-        alert(error.response?.data || "Error sending email.");
+      setVerificationState("idle");
+      alert(error.response?.data || "Error sending email.");
     }
-};
+  };
 
   return (
     <Container className="py-5 text-white">
@@ -73,11 +90,22 @@ const UserInfo = ({ currentUser }: UserTypes) => {
           </button>
 
           <button
-            onClick={()=>sendVerificationEmail()}
-            className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold  text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            onClick={sendVerificationEmail}
+            disabled={verificationState === "verifying" || verificationState === "verified"}
+            className={`rounded-md px-8 py-2.5 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+              ${
+                verificationState === "idle"
+                  ? "bg-white text-gray-900 hover:bg-gray-100 focus-visible:outline-red-600"
+                  : verificationState === "verifying"
+                  ? "bg-yellow-500 text-white cursor-not-allowed"
+                  : "bg-green-500 text-white cursor-not-allowed"
+              }`}
           >
-            Click here to verify your email
+            {verificationState === "idle" && "Click here to verify your email"}
+            {verificationState === "verifying" && "Verifying..."}
+            {verificationState === "verified" && "Account Verified"}
           </button>
+
         </div>
             
             {updateDetails && <UpdateUserDetails currentUser={currentUser}/>}

@@ -15,6 +15,7 @@ const Registration = () => {
   const [errMsg, setErrMsg] = useState("");
 
   const role = "customer";
+  const isVerified = false;
 
   const handleRegistration = async (e: any) => {
     e.preventDefault();
@@ -32,6 +33,7 @@ const Registration = () => {
         avatar: "imageUrl",
         id: res.user.uid,
         role,
+        isVerified
       });
       setLogin(true);
 
@@ -55,7 +57,6 @@ const Registration = () => {
       setErrMsg(errorMessage);
     } finally {
       setLoading(false);
-      navigate('/verifyEmail')
     }
   };
 
