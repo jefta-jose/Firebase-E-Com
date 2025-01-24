@@ -1,7 +1,7 @@
 import AdminCreateProduct from '@/ui/AdminCreateProduct';
 import { useEffect, useState } from 'react';
 import AdminUpdateProduct from './AdminUpdateProduct';
-import { useDeleteProductMutation, useGetProductsQuery } from '@/redux/productsSlics';
+import { useDeleteProductMutation, useGetProductsQuery } from '@/redux/productsSlice';
 
 const ProductsSection = () => {
   const { data: prodcts, isLoading: isFetchingProducts } = useGetProductsQuery();

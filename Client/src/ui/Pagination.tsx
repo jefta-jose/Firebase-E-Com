@@ -4,7 +4,7 @@ import { config } from "../../config";
 import { ProductProps } from "../../type";
 import ProductCard from "./ProductCard";
 import ReactPaginate from "react-paginate";
-import { useGetProductsQuery } from "@/redux/productsSlics";
+import { useGetProductsQuery } from "@/redux/productsSlice";
 
 interface ItemsProps {
   currentItems: ProductProps[];

@@ -4,33 +4,40 @@ import Container from "./Container";
 import { useEffect, useState } from "react";
 import UpdateUserDetails from "./updateUserDetails";
 import axios from "axios";
-import { getUserEmail, getUserVerification, getUserVerifying } from "@/lib/localStore";
+import { getUserEmail } from "@/lib/localStore";
+import { useGetUserByIdQuery } from "@/redux/userSlice";
 
 
 const UserInfo = ({ currentUser }: UserTypes) => {
+  const { data: singleUser, isLoading: isFetchingUser } = useGetUserByIdQuery(currentUser?.id);
+  
   const [updateDetails, setUpdateDetails] = useState(false);
-
-  const [isUserEmailVerified, setIsUserEmailVerified] = useState(false);
-  const [isUserEmailVerifying, setIsUserEmailVerifying] = useState(false);
-
-  const isVerified = getUserVerification();
-  const isVerifying = getUserVerifying();
-
+  
+  // Directly initialize the state based on the fetched user data
+  const [isUserEmailVerified, setIsUserEmailVerified] = useState(singleUser?.isVerified);
+  const [isUserEmailVerifying, setIsUserEmailVerifying] = useState(singleUser?.isVerifying);
+  
   useEffect(() => {
-    const checkVerificationStatus = () => {
+    const getUser = ()=>{
+        // Update the state if the user data changes
+        if (singleUser) {
+          setIsUserEmailVerified(singleUser.isVerified);
+          setIsUserEmailVerifying(singleUser.isVerifying);
+        }
+    }
 
-      setIsUserEmailVerified(isVerified);
-      setIsUserEmailVerifying(isVerifying);
-    };
+    if(!isFetchingUser){
+      getUser();
+    }
 
-    checkVerificationStatus();
-  }, [isVerified, isVerifying]);
+  }, [singleUser]); // Depend on singleUser to recheck when it changes
+  
 
   const sendVerificationEmail = async () => {
     const userEmail = getUserEmail();
 
     try {
-      if(!isVerified){
+      if(!singleUser?.isVerified){
         const response = await axios.post(
           "http://localhost:5000/send-verification-email",
           { email: userEmail }

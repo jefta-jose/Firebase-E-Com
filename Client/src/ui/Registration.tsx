@@ -5,19 +5,15 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import Login from "./Login";
-import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
 
-  const navigate = useNavigate();
   const [login, setLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
   const role = "customer";
   const isVerified = false;
-  const isVerifying = false;
-
 
   const handleRegistration = async (e: any) => {
     e.preventDefault();
@@ -35,8 +31,7 @@ const Registration = () => {
         avatar: "imageUrl",
         id: res.user.uid,
         role,
-        isVerified,
-        isVerifying
+        isVerified
       });
       setLogin(true);
 
@@ -141,7 +136,7 @@ const Registration = () => {
                 loading ? "bg-gray-500 hover:bg-gray-500" : "bg-indigo-700"
               }`}
             >
-              {loading ? "Loading..." : "Register"}
+              {loading ? "Loading..." : "Send Verification Code"}
             </button>
           </form>
           <p className="text-sm leading-6 text-gray-400 text-center -mt-2 py-10">

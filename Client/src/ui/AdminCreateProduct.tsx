@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Label from './Label';
-import { useAddProductMutation } from '@/redux/productsSlics';
+import { useAddProductMutation } from '@/redux/productsSlice';
 
 const AdminCreateProduct = ({ setAddProductModal }) => {
   const [loading, setLoading] = useState(false);

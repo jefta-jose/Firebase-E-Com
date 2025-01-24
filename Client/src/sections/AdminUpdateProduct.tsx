@@ -1,5 +1,5 @@
 import { useUpdateHighlightProductMutation } from "@/redux/highlightProducts";
-import { useGetProductByIdQuery, useUpdateProductMutation } from "@/redux/productsSlics";
+import { useGetProductByIdQuery, useUpdateProductMutation } from "@/redux/productsSlice";
 import Label from "@/ui/Label"
 import { useState } from "react"
 

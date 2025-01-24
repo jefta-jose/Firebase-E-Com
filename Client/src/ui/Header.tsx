@@ -17,7 +17,7 @@ import ProductCard from "./ProductCard";
 import { store } from "../lib/store";
 import { getUserRole } from "../lib/localStore";
 import { useGetCategoriesQuery } from "@/redux/categorySlice";
-import { useGetProductsQuery } from "@/redux/productsSlics";
+import { useGetProductsQuery } from "@/redux/productsSlice";
 
 const bottomNavigation = [
   { title: "Home", link: "/" },

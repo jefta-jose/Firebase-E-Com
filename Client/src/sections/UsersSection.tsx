@@ -1,11 +1,11 @@
-import { db } from '@/lib/firebase';
+import { useGetUsersQuery } from '@/redux/userSlice';
 import AdminCreateUser from '@/ui/AdminCreateUser';
-import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react'
 
 const UsersSection = () => {
   const [allUsers , setAllUsers] = useState([]);
-  const usersCollection = collection(db, "users");
+  const {data: users , isLoading:isFetchingUsers} = useGetUsersQuery();
+
   const [addUserModal , setAddUserModal] = useState(false);
   const USERS_PER_PAGE = 8; // Define items per page
   const [userPage, setUserPage] = useState(1);
@@ -21,21 +21,18 @@ const UsersSection = () => {
   useEffect(()=> {
     const fetchAllUsers = async () => {
         try {
-            const querySnapshot = await getDocs(usersCollection);
-            const usersList = querySnapshot.docs.map((doc) => ({
-            _id: doc.id,  // Store the document ID
-            ...doc.data(),  // Spread the document data
-            }));
-            setAllUsers(usersList);
+            setAllUsers(users);
         }
         catch (error) {
         console.error("Error fetching data", error);
         }
     };
 
-    fetchAllUsers();
+    if(!isFetchingUsers){
+      fetchAllUsers();
+    }
 
-  } , [])
+  } , [users])
     
   return (
     <div className="mb-8 p-6 bg-white rounded-lg shadow-md">

@@ -1,65 +1,69 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { auth } from "../lib/firebase";
 import { useState } from "react";
 import Label from "./Label";
+import { useAddUserMutation } from "@/redux/userSlice";
 
 
 const AdminCreateUser = ({setAddUserModal }) => {
-    const [loading, setLoading] = useState(false);
-    const [errMsg, setErrMsg] = useState("");
+  const [addUser] = useAddUserMutation();
 
-  const isVerified = false;
-  const isVerifying = false;
+  const [loading, setLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
-
-      const handleRegistration = async (e: any) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const { firstName, lastName, email, password , role }: any =
-          Object.fromEntries(formData);
-        try {
-          setLoading(true);
-          const res = await createUserWithEmailAndPassword(auth, email, password);
-    
-          await setDoc(doc(db, "users", res.user.uid), {
-            firstName,
-            lastName,
-            email,
-            avatar: "imageUrl",
-            id: res.user.uid,
-            role,
-            isVerified,
-            isVerifying
-          });
-    
-        } catch (error: any) {
-          let errorMessage;
-          switch (error.code) {
-            case "auth/invalid-email":
-              errorMessage = "Please enter a valid email.";
-              break;
-            case "auth/missing-password":
-              errorMessage = "Please enter a password.";
-              break;
-            case "auth/email-already-in-use":
-              errorMessage = "This email is already in use. Try another email.";
-              break;
-            // Add more cases as needed
-            default:
-              errorMessage = "An error occurred. Please try again.";
-          }
-          console.log("Error", error);
-          setErrMsg(errorMessage);
-        } finally {
-          setLoading(false);
-          handleCancel()
-        }
+  const handleRegistration = async (e: any) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const { firstName, lastName, email, password, role }: any = Object.fromEntries(formData);
+  
+    try {
+      setLoading(true);
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+  
+      // Instead of setDoc, use the mutation to add the user
+      const newUser = {
+        firstName,
+        lastName,
+        email,
+        avatar: "imageUrl", // Replace with actual image URL logic
+        id: res.user.uid,
+        role,
+        isVerified: false,
+        isVerifying: false
       };
+  
+      // Use the mutation here
+      await addUser(newUser);  // Mutation call
+  
+    } catch (error: any) {
+      let errorMessage;
+      switch (error.code) {
+        case "auth/invalid-email":
+          errorMessage = "Please enter a valid email.";
+          break;
+        case "auth/missing-password":
+          errorMessage = "Please enter a password.";
+          break;
+        case "auth/email-already-in-use":
+          errorMessage = "This email is already in use. Try another email.";
+          break;
+        // Add more cases as needed
+        default:
+          errorMessage = "An error occurred. Please try again.";
+      }
+      console.log("Error", error);
+      setErrMsg(errorMessage);
+    } finally {
+      setLoading(false);
+      handleCancel();
+    }
+  };
+  
+  
 
-      const handleCancel = () => {
-        setAddUserModal(false);
-      };
+  const handleCancel = () => {
+    setAddUserModal(false);
+  };
 
   return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">

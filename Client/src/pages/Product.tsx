@@ -15,7 +15,7 @@ import CategoryFilters from "../ui/CategoryFilters";
 import _ from "lodash";
 import { getUserRole } from "../lib/localStore";
 import AdminCreateProduct from "../ui/AdminCreateProduct";
-import { useGetProductByIdQuery, useGetProductsQuery } from "@/redux/productsSlics";
+import { useGetProductByIdQuery, useGetProductsQuery } from "@/redux/productsSlice";
 
 const Product = () => {
   const [productData, setProductData] = useState<ProductProps | null>(null);
