@@ -3,10 +3,28 @@ import { auth } from "../lib/firebase";
 import Container from "./Container";
 import { useState } from "react";
 import UpdateUserDetails from "./updateUserDetails";
+import axios from "axios";
+import { getUserEmail } from "@/lib/localStore";
+
+
 
 const UserInfo = ({ currentUser }: UserTypes) => {
 
   const [updateDetails , setupdateDetails] = useState(false)
+
+  const sendVerificationEmail = async () => {
+    const userEmail = getUserEmail();
+    const email = userEmail; // Replace with the logged-in user's email
+
+    try {
+        const response = await axios.post("http://localhost:5000/send-verification-email", {
+            email,
+        });
+        alert(response.data);
+    } catch (error: any) {
+        alert(error.response?.data || "Error sending email.");
+    }
+};
 
   return (
     <Container className="py-5 text-white">
@@ -52,6 +70,13 @@ const UserInfo = ({ currentUser }: UserTypes) => {
             className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold  text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           >
             Update Profile
+          </button>
+
+          <button
+            onClick={()=>sendVerificationEmail()}
+            className="rounded-md bg-white px-8 py-2.5 text-sm font-semibold  text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          >
+            Click here to verify your email
           </button>
         </div>
             

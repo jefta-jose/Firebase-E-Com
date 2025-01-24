@@ -19,7 +19,6 @@ import Success from "./pages/Success.tsx";
 import Layout from "./ui/Layout.tsx";
 import { store } from "./store/store.ts";
 import { Provider } from "react-redux";
-import EmailVerification from "./pages/EmailVerification.tsx";
 
 const RouterLayout = () => {
   return (
@@ -44,10 +43,6 @@ const router = createBrowserRouter([
       {
         path: "/product",
         element: <Product />,
-      },
-      {
-        path: "/verifyEmail",
-        element: <EmailVerification />,
       },
       {
         path: "/product/:id",
