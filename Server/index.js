@@ -114,6 +114,86 @@ const updateVerificationStatus = async(email , req,res)=>{
     }
 }
 
+// API to send password reset email
+app.post("/send-password-reset-email", (req, res) => {
+    const { email } = req.body;
+
+    if (!email) return res.status(400).send("Email is required.");
+
+    // Generate a password reset token
+    const token = crypto.randomBytes(32).toString("hex");
+    verificationTokens[token] = email;
+
+    // Email options
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Password Reset Request",
+        html: `${token}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send("Error sending email.");
+        }
+        res.send("Password reset email sent!");
+    });
+});
+
+// API to handle password reset request
+app.post("/reset-password", async (req, res) => {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+        return res.status(400).send("Token and new password are required.");
+    }
+
+    if (!verificationTokens[token]) {
+        return res.status(400).send("Invalid or expired token.");
+    }
+
+    const email = verificationTokens[token].toLowerCase(); // Normalize email to lowercase
+    delete verificationTokens[token];
+
+    try {
+        console.log(`Resetting password for email: ${email}`);
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", email));
+        const snapshot = await getDocs(q);
+
+        console.log(`Snapshot data:`, snapshot.empty ? "No matching user" : snapshot.docs[0].data());
+
+        if (!snapshot.empty) {
+            const docId = snapshot.docs[0].id;
+            const userDocRef = doc(db, "users", docId);
+            await updateDoc(userDocRef, { password: newPassword });
+
+            res.send("Password reset successful!");
+        } else {
+            res.status(404).send("User not found.");
+        }
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        res.status(500).send("Internal server error.");
+    }
+});
+
+
+
+// API to verify the token
+app.post("/verify-token", (req, res) => {
+    const { token } = req.body;
+
+    if (!token || !verificationTokens[token]) {
+        return res.status(400).send("Invalid or expired token.");
+    }
+
+    // If the token is valid, return success
+    res.send("Token verified!");
+});
+
+
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

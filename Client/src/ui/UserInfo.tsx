@@ -7,7 +7,7 @@ import axios from "axios";
 import { getUserEmail } from "@/lib/localStore";
 import { useGetUserByIdQuery } from "@/redux/userSlice";
 import { doc, onSnapshot } from "firebase/firestore";
-import { log } from "console";
+import toast from "react-hot-toast";
 
 
 const UserInfo = ({ currentUser }: UserTypes) => {
@@ -47,13 +47,13 @@ const UserInfo = ({ currentUser }: UserTypes) => {
           { email: userEmail }
         );
   
-        // alert(response.data);
+        toast.success(response.data);
 
       }
 
     } catch (error: any) {
       console.error("Error sending verification email:", error);
-      alert(error.response?.data || "Error sending email.");
+      toast.error(error.response?.data || "Error sending email.");
     }
   };
 

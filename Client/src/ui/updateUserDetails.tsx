@@ -5,12 +5,9 @@ import upload from "../lib/upload";
 import { UserTypes } from "../../type";
 
 import { getAuth } from "firebase/auth";
-import {
-  updatePassword,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-} from "firebase/auth";
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider, } from "firebase/auth";
 import { MdPhotoLibrary } from "react-icons/md";
+import toast from "react-hot-toast";
 
 const UpdateUserDetails = ({ currentUser }: UserTypes) => {
   const auth = getAuth();
@@ -56,7 +53,7 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
       });
 
       setErrMsg("");
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
       setErrMsg("An error occurred. Please try again.");
@@ -92,7 +89,7 @@ const UpdateUserDetails = ({ currentUser }: UserTypes) => {
         await updatePassword(user, newPassword);
 
         setErrMsg("");
-        alert("Password updated successfully!");
+        toast.success("Password updated successfully!");
       }
     } catch (error) {
       console.error("Error updating password:", error);

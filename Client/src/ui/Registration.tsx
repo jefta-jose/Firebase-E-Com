@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import Login from "./Login";
+import ResetPassword from "@/sections/ResetPassword";
 
 const Registration = () => {
 
@@ -148,6 +149,9 @@ const Registration = () => {
               Login
             </button>
           </p>
+
+          <ResetPassword/>
+
         </div>
       )}
     </div>

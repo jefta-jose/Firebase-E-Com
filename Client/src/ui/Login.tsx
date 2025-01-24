@@ -2,6 +2,7 @@ import {  useState } from "react";
 import Label from "./Label";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Loading from "./Loading";
+import ResetPassword from "@/sections/ResetPassword";
 
 const Login = ({ setLogin }: { setLogin: any }) => {
   
@@ -103,6 +104,8 @@ const Login = ({ setLogin }: { setLogin: any }) => {
           Register
         </button>
       </p>
+
+      <ResetPassword/>
       {loading && <Loading />}
     </div>
   );
