@@ -1,6 +1,0 @@
-[build]
-  functions = "netlify/functions"
-  publish = "client/build"
-
-[context.production.environment]
-  NODE_ENV = "production"

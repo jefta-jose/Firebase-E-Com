@@ -1,19 +1,38 @@
-import express from "express";
-import nodemailer from 'nodemailer'
-import bodyParser from 'body-parser'
-import cors from 'cors'
-import crypto from 'crypto'
-import dotenv from 'dotenv'
-import { db } from "./firebase.js";
-import { collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+const express = require("express");
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const crypto = require('crypto');
+const dotenv = require('dotenv');
+const { db } = require("./firebase.js");
+const { collection, doc, getDocs, query, updateDoc, where } = require("firebase/firestore");
 
-
+const admin = require('firebase-admin');
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 dotenv.config();
+
+const serviceAccount = {
+    "type": process.env.SERVICE_ACCOUNT_TYPE,
+    "project_id": process.env.PROJECT_ID,
+    "private_key_id": process.env.PRIVATE_KEY_ID,
+    "private_key": process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+    "client_email": process.env.CLIENT_EMAIL,
+    "client_id": process.env.CLIENT_ID,
+    "auth_uri": process.env.AUTH_URI,
+    "token_uri": process.env.TOKEN_URI,
+    "auth_provider_x509_cert_url": process.env.AUTH_PROVIDER_X509_CERT_URL,
+    "client_x509_cert_url": process.env.CLIENT_X509_CERT_URL,
+    "universe_domain": process.env.UNIVERSE_DOMAIN,
+};
+
+
+admin.initializeApp({
+credential: admin.credential.cert(serviceAccount),
+});
 
 // Store verification tokens
 const verificationTokens = {};
@@ -158,16 +177,15 @@ app.post("/reset-password", async (req, res) => {
 
     try {
         console.log(`Resetting password for email: ${email}`);
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", email));
-        const snapshot = await getDocs(q);
 
-        console.log(`Snapshot data:`, snapshot.empty ? "No matching user" : snapshot.docs[0].data());
+        // Verify the user's token with Firebase Authentication (check if it's valid)
+        const user = await admin.auth().getUserByEmail(email);
 
-        if (!snapshot.empty) {
-            const docId = snapshot.docs[0].id;
-            const userDocRef = doc(db, "users", docId);
-            await updateDoc(userDocRef, { password: newPassword });
+        if (user) {
+            console.log(`Found user: ${email}`);
+            
+            // Update the password using Firebase Authentication
+            await admin.auth().updateUser(user.uid, { password: newPassword });
 
             res.send("Password reset successful!");
         } else {
