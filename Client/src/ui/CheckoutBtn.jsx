@@ -6,12 +6,12 @@ import { getUserVerification } from "@/lib/localStore";
 const CheckoutBtn = ({products}) => {
   const isVerified = getUserVerification();
   const { currentUser } = store();
-  const publishableKey = "";
+  const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = loadStripe(publishableKey);
 
   const handleCheckout = async () => {
     const stripe = await stripePromise;
-    const response = await fetch(`${config?.baseUrl}/checkout`, {
+    const response = await fetch(`http://localhost:5000/checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
